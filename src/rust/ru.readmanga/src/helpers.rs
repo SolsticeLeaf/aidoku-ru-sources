@@ -19,10 +19,6 @@ pub fn get_base_url() -> String {
         .unwrap_or_else(|| BASE_URL.to_string())
 }
 
-pub fn get_search_base_url() -> String {
-    format!("{}/search/advancedResults?", get_base_url())
-}
-
 pub fn get_html(url: &str) -> Result<WNode> {
 	Request::new(url, HttpMethod::Get)
   	.header("Referer", "https://www.google.com/")
