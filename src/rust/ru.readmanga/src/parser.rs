@@ -67,14 +67,12 @@ pub fn parse_search_results(html: &WNode) -> Result<Vec<Manga>> {
 				.map(WNode::text)
 				.collect();
 
-			// TODO: implement more correct status parsing
+			// Parse status from tags in the tile: consider both translation and release completion badges
 			let status = {
-				if let [span_node] = &node.select("span.mangaTranslationCompleted")[..] {
-					if span_node.text() == "переведено" {
-						MangaStatus::Completed
-					} else {
-						MangaStatus::Unknown
-					}
+				let has_completed_badge = !node.select("span.mangaTranslationCompleted").is_empty()
+					|| !node.select("span.mangaCompleted").is_empty();
+				if has_completed_badge {
+					MangaStatus::Completed
 				} else if let [_] = &div_img_node.select("div.manga-updated")[..] {
 					MangaStatus::Ongoing
 				} else {
@@ -190,28 +188,28 @@ pub fn parse_manga(html: &WNode, id: String) -> Result<Manga> {
 	)
 	.collect();
 
-	let status_str_opt = main_info_node
-		.select("p")
-		.into_iter()
-		.filter(|pn| pn.attr("class").is_none())
-		.flat_map(|pn| pn.select("span"))
-		.find(|sn| {
-			if let Some(class_attr) = sn.attr("class") {
-				return class_attr
-					.split_whitespace()
-					.any(|cl| cl.starts_with("text-"));
-			}
-			false
-		})
-		.map(|status_node| status_node.text());
-	let status = match status_str_opt {
-		Some(status_str) => match status_str.to_lowercase().as_str() {
-			"переведено" => MangaStatus::Completed,
-			"переводится" => MangaStatus::Ongoing,
-			"перевод приостановлен" => MangaStatus::Hiatus,
-			_ => MangaStatus::Unknown,
-		},
-		None => MangaStatus::Unknown,
+	// Parse status from badges on the manga page
+	let badge_texts: Vec<String> = main_info_node
+		.select("p span.badge")
+		.iter()
+		.map(WNode::text)
+		.map(|s| s.to_lowercase())
+		.collect();
+	let status = if badge_texts.iter().any(|t|
+		t.contains("выпуск завершён") || t.contains("завершён") || t.contains("переведено")
+	) {
+		MangaStatus::Completed
+	} else if badge_texts
+		.iter()
+		.any(|t| t.contains("выпуск продолжается") || t.contains("переводится"))
+	{
+		MangaStatus::Ongoing
+	} else if badge_texts.iter().any(|t|
+		t.contains("перевод приостановлен") || t.contains("выпуск остановлен") || t.contains("заморожен")
+	) {
+		MangaStatus::Hiatus
+	} else {
+		MangaStatus::Unknown
 	};
 
 	Ok(Manga {
