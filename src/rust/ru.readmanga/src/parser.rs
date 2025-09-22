@@ -65,13 +65,13 @@ pub fn parse_search_results(html: &WNode) -> Result<Vec<Manga>> {
 			let url = helpers::get_manga_url(&id);
 
 			let categories: Vec<String> = div_html_popover_holder_node
-				.select("a.elem_genre")
+				.select("elem_genre")
 				.iter()
 				.filter_map(|a_node| a_node.text().trim().to_string().into())
 				.collect();
 
 			let status_str_opt = div_tile_info_node
-				.select("span.badge")
+				.select("badge")
 				.find_map(|sn| {
 					let text = sn.text().trim().to_string();
 					if !text.is_empty() {
@@ -201,36 +201,29 @@ pub fn parse_manga(html: &WNode, id: String) -> Result<Manga> {
 		None => MangaViewer::default(),
 	};
 
-	let categories = chain!(
-		once(category_opt).flatten(),
-		extract_info_iter("genre", "element")
-	)
-	.filter(|s| !s.trim().is_empty())
-	.collect::<Vec<String>>();
+	let categories: Vec<String> = main_info_node
+				.select("elem_genre")
+				.iter()
+				.filter_map(|a_node| a_node.text().trim().to_string().into())
+				.collect();
 
-	let status_str_opt = main_info_node
-		.select("p")
-		.into_iter()
-		.filter(|pn| pn.attr("class").is_none())
-		.flat_map(|pn| pn.select("span"))
-		.find_map(|sn| {
-			if let Some(class_attr) = sn.attr("class") {
-				if class_attr.split_whitespace().any(|cl| cl.starts_with("badge")) {
+			let status_str_opt = main_info_node
+				.select("badge")
+				.find_map(|sn| {
 					let text = sn.text().trim().to_string();
 					if !text.is_empty() {
-						return Some(text);
+						Some(text)
+					} else {
+						None
 					}
-				}
-			}
-			None
-		});
-	let status = match status_str_opt.as_deref() {
-		Some("переведено") | Some("выпуск завершён") => MangaStatus::Completed,
-		Some("переводится") => MangaStatus::Ongoing,
-		Some("перевод приостановлен") => MangaStatus::Hiatus,
-		Some("заброшен") => MangaStatus::Cancelled,
-		_ => MangaStatus::Unknown,
-	};
+				});
+			let status = match status_str_opt.as_deref() {
+				Some("переведено") | Some("выпуск завершён") => MangaStatus::Completed,
+				Some("переводится") => MangaStatus::Ongoing,
+				Some("перевод приостановлен") => MangaStatus::Hiatus,
+				Some("заброшен") => MangaStatus::Cancelled,
+				_ => MangaStatus::Unknown,
+			};
 
 	Ok(Manga {
 		id,
@@ -258,7 +251,6 @@ pub fn parse_chapters(html: &WNode, manga_id: &str) -> Result<Vec<Chapter>> {
 		.filter_map(|chapter_elem| {
 			let link_elem = chapter_elem.select("a.chapter-link").pop()?;
 
-			// this: `chapter_elem.select("td.d-none")` doesn't work here, I don't know why
 			let date_elems: Vec<_> = {
 				let chapter_repr = chapter_elem.to_str();
 
