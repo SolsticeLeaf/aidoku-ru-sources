@@ -62,7 +62,7 @@ pub fn parse_search_results(html: &WNode) -> Result<Vec<Manga>> {
 			let url = helpers::get_manga_url(&id);
 
 			let categories = div_html_popover_holder_node
-				.select("a.badge-light")
+				.select("span.badge-light")
 				.iter()
 				.map(WNode::text)
 				.collect();
@@ -169,17 +169,7 @@ pub fn parse_manga(html: &WNode, id: String) -> Result<Manga> {
 
 	let url = helpers::get_manga_url(&id);
 
-	// Parse category (type) and genres directly from subject-meta
-	let category_opt = main_info_node
-		.select("span.elem_category a.element-link")
-		.pop()
-		.map(WNode::text)
-		.or_else(|| {
-			main_info_node
-				.select("a.element-link[href^='/list/category/']")
-				.pop()
-				.map(WNode::text)
-		});
+	let category_opt = extract_info_iter("category", "element").next();
 
 	let viewer = match &category_opt {
 		Some(category) => match category.to_lowercase().as_str() {
@@ -192,21 +182,31 @@ pub fn parse_manga(html: &WNode, id: String) -> Result<Manga> {
 		None => MangaViewer::default(),
 	};
 
-	let genres_from_links = main_info_node
-		.select("a.badge.elem_genre")
-		.iter()
-		.map(WNode::text);
-	let genres_from_spans = main_info_node
-		.select("span.badge.elem_genre")
-		.iter()
-		.map(WNode::text);
+	// Categories should include: type (category), genres and tags. Some pages render
+	// genres/tags as links, others as plain spans. Collect both.
+	let genres_iter = chain!(
+		main_info_node
+			.select("a.elem_genre")
+			.into_iter()
+			.map(WNode::text),
+		main_info_node
+			.select("span.elem_genre")
+			.into_iter()
+			.map(WNode::text)
+	);
 
-	let categories = chain!(
-		once(category_opt).flatten(),
-		genres_from_links,
-		genres_from_spans
-	)
-	.collect();
+	let tags_iter = chain!(
+		main_info_node
+			.select("a.elem_tag")
+			.into_iter()
+			.map(WNode::text),
+		main_info_node
+			.select("span.elem_tag")
+			.into_iter()
+			.map(WNode::text)
+	);
+
+	let categories = chain!(once(category_opt).flatten(), genres_iter, tags_iter).collect();
 
 	// Parse status from badges on the manga page
 	let badge_texts: Vec<String> = main_info_node
