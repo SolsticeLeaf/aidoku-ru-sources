@@ -124,7 +124,7 @@ pub fn parse_manga(html: &WNode, id: String) -> Result<Manga> {
 		.unwrap_or_default();
 
 	let names_node = main_node.select("h1.names").pop().ok_or(parsing_error)?;
-	let title = names_node.select("span.name").pop().ok_or(parsing_error)?.text();
+	let title = names_node.select("span.name").pop().ok_or(parsing_error)?;
 
 	let main_info_node = main_attributes_node
 		.select("div.subject-meta")
