@@ -182,31 +182,37 @@ pub fn parse_manga(html: &WNode, id: String) -> Result<Manga> {
 		None => MangaViewer::default(),
 	};
 
-	// Categories should include: type (category), genres and tags. Some pages render
-	// genres/tags as links, others as plain spans. Collect both.
-	let genres_iter = chain!(
+	// Categories include type (category), genres and tags. Collect a simple list.
+	let mut categories: Vec<String> = Vec::new();
+	if let Some(category) = category_opt {
+		categories.push(category);
+	}
+	// Genres
+	categories.extend(
 		main_info_node
 			.select("a.elem_genre")
-			.into_iter()
+			.iter()
 			.map(WNode::text),
+	);
+	categories.extend(
 		main_info_node
 			.select("span.elem_genre")
-			.into_iter()
-			.map(WNode::text)
+			.iter()
+			.map(WNode::text),
 	);
-
-	let tags_iter = chain!(
+	// Tags
+	categories.extend(
 		main_info_node
 			.select("a.elem_tag")
-			.into_iter()
+			.iter()
 			.map(WNode::text),
+	);
+	categories.extend(
 		main_info_node
 			.select("span.elem_tag")
-			.into_iter()
-			.map(WNode::text)
+			.iter()
+			.map(WNode::text),
 	);
-
-	let categories = chain!(once(category_opt).flatten(), genres_iter, tags_iter).collect();
 
 	// Parse status from badges on the manga page
 	let badge_texts: Vec<String> = main_info_node
