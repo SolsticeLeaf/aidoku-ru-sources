@@ -119,7 +119,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "readmanga"
+name = "senkuro"
 version = "1.0.0"
 dependencies = [
  "aidoku",
