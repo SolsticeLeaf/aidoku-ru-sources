@@ -11,6 +11,7 @@ use aidoku::{
 
 extern crate alloc;
 use alloc::{boxed::Box, string::ToString};
+use aidoku::std::defaults::defaults_get;
 
 use itertools::chain;
 
@@ -484,14 +485,11 @@ pub fn get_filter_url(filters: &[Filter], sorting: &Sorting, page: i32) -> Resul
         b_is_q.cmp(&a_is_q) // place q= before others
     });
 
-    {
-        use aidoku::std::defaults::defaults_get;
-        let base = defaults_get("baseUrl")
-            .and_then(|v| v.as_string().ok())
-            .map(|s| s.read())
-            .unwrap_or_default();
-        Ok(format!("{}/search/advancedResults?{}", base, params.join("&")))
-    }
+    let base = defaults_get("baseUrl")
+        .and_then(|v| v.as_string().ok())
+        .map(|s| s.read())
+        .unwrap_or_default();
+    Ok(format!("{}/search/advancedResults?{}", base, params.join("&")))
 }
 
 pub fn parse_incoming_url(url: &str) -> Result<DeepLink> {
