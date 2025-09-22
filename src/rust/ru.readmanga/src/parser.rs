@@ -48,11 +48,8 @@ pub fn parse_search_results(html: &WNode) -> Result<Vec<Manga>> {
 			let author = a_person_link_nodes
 				.iter()
 				.map(WNode::text)
-				.filter(|s| !s.trim().is_empty())
 				.intersperse(", ".to_string())
-				.collect::<String>()
-				.trim()
-				.to_string();
+				.collect();
 
 			let div_html_popover_holder_node =
 				div_desc_node.select("div.html-popover-holder").pop()?;
@@ -60,32 +57,29 @@ pub fn parse_search_results(html: &WNode) -> Result<Vec<Manga>> {
 			let div_manga_description_node = div_html_popover_holder_node
 				.select("div.manga-description")
 				.pop()?;
-			let description = div_manga_description_node.text().trim().to_string();
+			let description = div_manga_description_node.text();
 
 			let url = helpers::get_manga_url(&id);
 
-			let categories: Vec<String> = div_html_popover_holder_node
-				.select("a.elem_genre")
+			let categories = div_html_popover_holder_node
+				.select("span.badge-light")
 				.iter()
-				.filter_map(|a_node| a_node.text().trim().to_string().into())
+				.map(WNode::text)
 				.collect();
 
-			let status_str_opt = div_tile_info_node
-				.select("span.badge")
-				.find_map(|sn| {
-					let text = sn.text().trim().to_string();
-					if !text.is_empty() {
-						Some(text)
+			// TODO: implement more correct status parsing
+			let status = {
+				if let [span_node] = &node.select("span.mangaTranslationCompleted")[..] {
+					if span_node.text() == "переведено" {
+						MangaStatus::Completed
 					} else {
-						None
+						MangaStatus::Unknown
 					}
-				});
-			let status = match status_str_opt.as_deref() {
-				Some("переведено") | Some("выпуск завершён") => MangaStatus::Completed,
-				Some("переводится") => MangaStatus::Ongoing,
-				Some("перевод приостановлен") => MangaStatus::Hiatus,
-				Some("заброшен") => MangaStatus::Cancelled,
-				_ => MangaStatus::Unknown,
+				} else if let [_] = &div_img_node.select("div.manga-updated")[..] {
+					MangaStatus::Ongoing
+				} else {
+					MangaStatus::Unknown
+				}
 			};
 
 			Some(Manga {
@@ -135,9 +129,7 @@ pub fn parse_manga(html: &WNode, id: String) -> Result<Manga> {
 		.into_iter()
 		.map(|name_node| name_node.text())
 		.intersperse(" | ".to_string())
-		.collect::<String>()
-		.trim()
-		.to_string();
+		.collect();
 
 	let main_info_node = main_attributes_node
 		.select("div.subject-meta")
@@ -159,18 +151,12 @@ pub fn parse_manga(html: &WNode, id: String) -> Result<Manga> {
 		extract_info_iter("author", "person"),
 		extract_info_iter("screenwriter", "person")
 	)
-	.filter(|s| !s.trim().is_empty())
 	.intersperse(", ".to_string())
-	.collect::<String>()
-	.trim()
-	.to_string();
+	.collect();
 
 	let artist = extract_info_iter("illustrator", "person")
-		.filter(|s| !s.trim().is_empty())
 		.intersperse(", ".to_string())
-		.collect::<String>()
-		.trim()
-		.to_string();
+		.collect();
 
 	let description = main_node
 		.select("meta")
@@ -182,9 +168,7 @@ pub fn parse_manga(html: &WNode, id: String) -> Result<Manga> {
 			false
 		})
 		.and_then(|desc_node| desc_node.attr("content"))
-		.unwrap_or_default()
-		.trim()
-		.to_string();
+		.unwrap_or_default();
 
 	let url = helpers::get_manga_url(&id);
 
@@ -205,31 +189,30 @@ pub fn parse_manga(html: &WNode, id: String) -> Result<Manga> {
 		once(category_opt).flatten(),
 		extract_info_iter("genre", "element")
 	)
-	.filter(|s| !s.trim().is_empty())
-	.collect::<Vec<String>>();
+	.collect();
 
 	let status_str_opt = main_info_node
 		.select("p")
 		.into_iter()
 		.filter(|pn| pn.attr("class").is_none())
 		.flat_map(|pn| pn.select("span"))
-		.find_map(|sn| {
+		.find(|sn| {
 			if let Some(class_attr) = sn.attr("class") {
-				if class_attr.split_whitespace().any(|cl| cl.starts_with("badge")) {
-					let text = sn.text().trim().to_string();
-					if !text.is_empty() {
-						return Some(text);
-					}
-				}
+				return class_attr
+					.split_whitespace()
+					.any(|cl| cl.starts_with("text-"));
 			}
-			None
-		});
-	let status = match status_str_opt.as_deref() {
-		Some("переведено") | Some("выпуск завершён") => MangaStatus::Completed,
-		Some("переводится") => MangaStatus::Ongoing,
-		Some("перевод приостановлен") => MangaStatus::Hiatus,
-		Some("заброшен") => MangaStatus::Cancelled,
-		_ => MangaStatus::Unknown,
+			false
+		})
+		.map(|status_node| status_node.text());
+	let status = match status_str_opt {
+		Some(status_str) => match status_str.to_lowercase().as_str() {
+			"переведено" => MangaStatus::Completed,
+			"переводится" => MangaStatus::Ongoing,
+			"перевод приостановлен" => MangaStatus::Hiatus,
+			_ => MangaStatus::Unknown,
+		},
+		None => MangaStatus::Unknown,
 	};
 
 	Ok(Manga {
@@ -284,10 +267,10 @@ pub fn parse_chapters(html: &WNode, manga_id: &str) -> Result<Vec<Chapter>> {
 					.chars()
 					.skip_while(|char| char.is_numeric() || char.is_whitespace() || char == &'-')
 					.collect();
-				if strippred_title.trim().is_empty() {
+				if strippred_title.is_empty() {
 					full_title
 				} else {
-					strippred_title.trim().to_string()
+					strippred_title
 				}
 			};
 
@@ -309,9 +292,7 @@ pub fn parse_chapters(html: &WNode, manga_id: &str) -> Result<Vec<Chapter>> {
 			let scanlator = link_elem
 				.attr("title")
 				.unwrap_or_default()
-				.replace(" (Переводчик)", "")
-				.trim()
-				.to_string();
+				.replace(" (Переводчик)", "");
 
 			let url = helpers::get_chapter_url(manga_id, &id);
 
