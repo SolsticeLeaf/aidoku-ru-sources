@@ -9,13 +9,13 @@
   },
   "listings": [
     {
-      "name": "Rating"
+      "name": "Рейтинг"
     },
     {
-      "name": "Popular"
+      "name": "Популярное"
     },
     {
-      "name": "Updated Recently"
+      "name": "Обновлено недавно"
     }
   ]
 }
