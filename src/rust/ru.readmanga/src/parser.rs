@@ -64,14 +64,12 @@ pub fn parse_search_results(html: &WNode) -> Result<Vec<Manga>> {
 
 			let url = helpers::get_manga_url(&id);
 
-			// Parse genres/tags from a.elem_genre (based on provided HTML snippet)
 			let categories: Vec<String> = div_html_popover_holder_node
 				.select("a.elem_genre")
 				.iter()
 				.filter_map(|a_node| a_node.text().trim().to_string().into())
 				.collect();
 
-			// Parse status from span.badge (based on provided HTML snippet for status)
 			let status_str_opt = div_tile_info_node
 				.select("span.badge")
 				.find_map(|sn| {
@@ -203,7 +201,6 @@ pub fn parse_manga(html: &WNode, id: String) -> Result<Manga> {
 		None => MangaViewer::default(),
 	};
 
-	// Parse genres/tags from elem_genre (based on provided HTML snippet)
 	let categories = chain!(
 		once(category_opt).flatten(),
 		extract_info_iter("genre", "element")
