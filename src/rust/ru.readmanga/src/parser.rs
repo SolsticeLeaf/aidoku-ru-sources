@@ -64,21 +64,12 @@ pub fn parse_search_results(html: &WNode) -> Result<Vec<Manga>> {
 
 			let url = helpers::get_manga_url(&id);
 
-			// Parse genres/tags from a.elem_genre (based on provided HTML snippet)
 			let categories: Vec<String> = div_html_popover_holder_node
 				.select("a.elem_genre")
 				.iter()
-				.filter_map(|a_node| {
-					let text = a_node.text().trim().to_string();
-					if !text.is_empty() {
-						Some(text)
-					} else {
-						None
-					}
-				})
+				.filter_map(|a_node| a_node.text().trim().to_string().into())
 				.collect();
 
-			// Parse status from span.badge in div.tile-info (adapted for search results; if not present, fallback to Unknown)
 			let status_str_opt = div_tile_info_node
 				.select("span.badge")
 				.find_map(|sn| {
@@ -210,36 +201,28 @@ pub fn parse_manga(html: &WNode, id: String) -> Result<Manga> {
 		None => MangaViewer::default(),
 	};
 
-	// Parse genres/tags from a.elem_genre in p.elementList (based on provided HTML snippet)
-	let genres: Vec<String> = main_info_node
-		.select("p.elementList a.elem_genre")
-		.iter()
-		.filter_map(|a_node| {
-			let text = a_node.text().trim().to_string();
-			if !text.is_empty() {
-				Some(text)
-			} else {
-				None
-			}
-		})
-		.collect();
-
-	let categories: Vec<String> = chain!(
+	let categories = chain!(
 		once(category_opt).flatten(),
-		genres.into_iter()
+		extract_info_iter("genre", "element")
 	)
 	.filter(|s| !s.trim().is_empty())
-	.collect();
+	.collect::<Vec<String>>();
 
 	let status_str_opt = main_info_node
-		.select("p span.badge")
+		.select("p")
+		.into_iter()
+		.filter(|pn| pn.attr("class").is_none())
+		.flat_map(|pn| pn.select("span"))
 		.find_map(|sn| {
-			let text = sn.text().trim().to_string();
-			if !text.is_empty() {
-				Some(text)
-			} else {
-				None
+			if let Some(class_attr) = sn.attr("class") {
+				if class_attr.split_whitespace().any(|cl| cl.starts_with("badge")) {
+					let text = sn.text().trim().to_string();
+					if !text.is_empty() {
+						return Some(text);
+					}
+				}
 			}
+			None
 		});
 	let status = match status_str_opt.as_deref() {
 		Some("переведено") | Some("выпуск завершён") => MangaStatus::Completed,
@@ -275,6 +258,7 @@ pub fn parse_chapters(html: &WNode, manga_id: &str) -> Result<Vec<Chapter>> {
 		.filter_map(|chapter_elem| {
 			let link_elem = chapter_elem.select("a.chapter-link").pop()?;
 
+			// this: `chapter_elem.select("td.d-none")` doesn't work here, I don't know why
 			let date_elems: Vec<_> = {
 				let chapter_repr = chapter_elem.to_str();
 
