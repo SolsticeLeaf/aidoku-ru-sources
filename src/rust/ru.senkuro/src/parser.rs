@@ -27,81 +27,45 @@ pub fn parse_search_results(html: &WNode) -> Result<Vec<Manga>> {
 	let mangas: Vec<_> = nodes
 		.into_iter()
 		.filter_map(|node| {
-			let div_img_node = node.select("img").pop()?;
+			let a_node = node.select("a").pop()?;
+			let href = a_node.attr("href")?;
+			// Пример: /manga/my-childhood-friends-are-trying-to-kill-me/chapters
+			let id = href
+				.trim_start_matches("/manga/")
+				.trim_end_matches("/chapters")
+				.trim_matches('/')
+				.to_string();
 
-			let id = {
-				let a_non_hover_node = node.select("a").pop()?;
-				a_non_hover_node
-					.attr("href")?
-					.trim_start_matches('/')
-					.to_string()
-			};
+			let img_node = a_node.select("img").pop()?;
+			let cover = img_node.attr("src")?.to_string();
+			let title = node.select("h3.card-title").pop()?.text();
 
-			let cover = div_img_node.attr("original")?;
-			let title = div_img_node.attr("alt")?;
+			// Жанры (теги) — все span.tag внутри .card-status__down
+			let mut categories = Vec::new();
+			if let Some(status_down) = node.select("div.card-status__down").pop() {
+				for tag in status_down.select("span.tag") {
+					let text = tag.text().trim().to_string();
+					if !text.is_empty() && !text.chars().all(|c| c.is_numeric() || c == '.' || c == ',') {
+						categories.push(text);
+					}
+				}
+			}
 
-			let div_desc_node = node.select("div.desc").pop()?;
-
-			let div_tile_info_node = div_desc_node.select("div.tile-info").pop()?;
-			let a_person_link_nodes = div_tile_info_node.select("a.person-link");
-			let author = a_person_link_nodes
-				.iter()
-				.map(WNode::text)
-				.intersperse(", ".to_string())
-				.collect();
-
-			let div_html_popover_holder_node =
-				div_desc_node.select("div.html-popover-holder").pop()?;
-
-			let div_manga_description_node = div_html_popover_holder_node
-				.select("div.manga-description")
-				.pop()?;
-			let description = div_manga_description_node.text();
+			// Оценка (рейтинг) можно парсить отдельно, если нужно
+			// let rating = ...
 
 			let url = helpers::get_manga_url(&id);
-
-			let mut categories: Vec<String> = Vec::new();
-			categories.extend(
-				div_tile_info_node
-					.select("a.badge")
-					.iter()
-					.map(WNode::text),
-			);
-			categories.extend(
-				div_html_popover_holder_node
-					.select("span.elem_genre")
-					.iter()
-					.map(WNode::text),
-			);
-			categories.extend(
-				div_html_popover_holder_node
-					.select("span.elem_tag")
-					.iter()
-					.map(WNode::text),
-			);
-
-			let status = {
-				let has_completed_badge = !node.select("span.mangaTranslationCompleted").is_empty()
-					|| !node.select("span.mangaCompleted").is_empty();
-				if has_completed_badge {
-					MangaStatus::Completed
-				} else if let [_] = &div_img_node.select("div.manga-updated")[..] {
-					MangaStatus::Ongoing
-				} else {
-					MangaStatus::Unknown
-				}
-			};
 
 			Some(Manga {
 				id,
 				cover,
 				title,
-				author,
-				artist: "".to_string(),
-				description,
+				author: String::new(),
+				artist: String::new(),
+				description: String::new(),
 				url,
 				categories,
-				status,
+				status: MangaStatus::Unknown,
 				nsfw: MangaContentRating::default(),
 				viewer: MangaViewer::Rtl,
 			})
@@ -118,239 +82,131 @@ fn get_manga_page_main_node(html: &WNode) -> Result<WNode> {
 }
 
 pub fn parse_manga(html: &WNode, id: String) -> Result<Manga> {
-	let parsing_error = helpers::create_parsing_error();
+    let parsing_error = helpers::create_parsing_error();
 
-	let main_node = get_manga_page_main_node(html)?;
+    // Обложка
+    let cover = html
+        .select(".project-poster img")
+        .pop()
+        .and_then(|img| img.attr("src"))
+        .unwrap_or("")
+        .to_string();
 
-	let main_attributes_node = main_node
-		.select("div.flex-row")
-		.pop()
-		.ok_or(parsing_error)?;
+    // Название
+    let title = html
+        .select("h1.caption.caption-size-l")
+        .pop()
+        .map(|n| n.text())
+        .unwrap_or_default();
 
-	let picture_fororama_node = main_attributes_node.select("div.picture-fotorama").pop();
-	let cover = picture_fororama_node
-		.and_then(|pfn| {
-			let mut imgs = pfn.select("img");
-			imgs.into_iter().next()
-		})
-		.and_then(|img_node| {
-			img_node
-				.attr("data-full")
-				.or_else(|| img_node.attr("data-thumb"))
-				.or_else(|| img_node.attr("src"))
-		})
-		.map(|url| if url.contains("://") { url } else { format!("https:{url}") })
-		.unwrap_or_default();
+    // Жанры/лейблы
+    let categories: Vec<String> = html
+        .select(".project-tags a > span")
+        .into_iter()
+        .map(|n| n.text().trim().to_string())
+        .filter(|s| !s.is_empty() && !s.chars().all(|c| c.is_numeric()))
+        .collect();
 
-	let names_node = main_node.select("h1.names").pop().ok_or(parsing_error)?;
-	let title = names_node
-		.select("span.name")
-		.pop()
-		.ok_or(parsing_error)?
-		.text();
+    // Описание
+    let description = html
+        .select(".text-expander__collapse p")
+        .into_iter()
+        .map(|n| n.text().trim().to_string())
+        .collect::<Vec<_>>()
+        .join("\n");
 
-	let main_info_node = main_attributes_node
-		.select("div.subject-meta")
-		.pop()
-		.ok_or(parsing_error)?;
+    // Статус
+    let status = html
+        .select(".project-stats__item")
+        .into_iter()
+        .find_map(|item| {
+            let label = item.select(".project-stats__text").pop()?.text();
+            if label.contains("Статус тайтла") {
+                let value = item.select(".project-stats__name").pop()?.text().to_lowercase();
+                if value.contains("завершён") { Some(MangaStatus::Completed) }
+                else if value.contains("онгоинг") { Some(MangaStatus::Ongoing) }
+                else if value.contains("приостановлен") { Some(MangaStatus::Hiatus) }
+                else { Some(MangaStatus::Unknown) }
+            } else {
+                None
+            }
+        })
+        .unwrap_or(MangaStatus::Unknown);
 
-	let extract_info_iter = |elem_class, link_type| {
-		main_info_node
-			.select(&format!("span.elem_{elem_class}"))
-			.into_iter()
-			.flat_map(move |node| {
-				node.select(&format!("a.{link_type}-link"))
-					.into_iter()
-					.map(|person_node| person_node.text())
-			})
-	};
+    let url = helpers::get_manga_url(&id);
 
-	let author = chain!(
-		extract_info_iter("author", "person"),
-		extract_info_iter("screenwriter", "person")
-	)
-	.intersperse(", ".to_string())
-	.collect();
-
-	let artist = extract_info_iter("illustrator", "person")
-		.intersperse(", ".to_string())
-		.collect();
-
-	let description = main_node
-		.select("meta")
-		.into_iter()
-		.find(|mn| {
-			if let Some(itemprop) = mn.attr("itemprop") {
-				return itemprop == "description";
-			}
-			false
-		})
-		.and_then(|desc_node| desc_node.attr("content"))
-		.unwrap_or_default();
-
-	let url = helpers::get_manga_url(&id);
-
-	let category_opt = extract_info_iter("category", "element").next();
-
-	let viewer = match &category_opt {
-		Some(category) => match category.to_lowercase().as_str() {
-			"oel-манга" => MangaViewer::Scroll,
-			"комикс" => MangaViewer::Ltr,
-			"манхва" => MangaViewer::Scroll,
-			"маньхуа" => MangaViewer::Scroll,
-			_ => MangaViewer::default(),
-		},
-		None => MangaViewer::default(),
-	};
-
-	let mut categories: Vec<String> = Vec::new();
-	if let Some(category) = category_opt {
-		categories.push(category);
-	}
-	// Genres
-	categories.extend(
-		main_info_node
-			.select("a.elem_genre")
-			.iter()
-			.map(WNode::text),
-	);
-	categories.extend(
-		main_info_node
-			.select("span.elem_genre")
-			.iter()
-			.map(WNode::text),
-	);
-	// Tags
-	categories.extend(
-		main_info_node
-			.select("a.elem_tag")
-			.iter()
-			.map(WNode::text),
-	);
-	categories.extend(
-		main_info_node
-			.select("span.elem_tag")
-			.iter()
-			.map(WNode::text),
-	);
-
-	let badge_texts: Vec<String> = main_info_node
-		.select("p span.badge")
-		.iter()
-		.map(WNode::text)
-		.map(|s| s.to_lowercase())
-		.collect();
-	let status = if badge_texts.iter().any(|t|
-		t.contains("выпуск завершён") || t.contains("завершён") || t.contains("переведено")
-	) {
-		MangaStatus::Completed
-	} else if badge_texts
-		.iter()
-		.any(|t| t.contains("выпуск продолжается") || t.contains("переводится"))
-	{
-		MangaStatus::Ongoing
-	} else if badge_texts.iter().any(|t|
-		t.contains("перевод приостановлен") || t.contains("выпуск остановлен") || t.contains("заморожен")
-	) {
-		MangaStatus::Hiatus
-	} else {
-		MangaStatus::Unknown
-	};
-
-	Ok(Manga {
-		id,
-		cover,
-		title,
-		author,
-		artist,
-		description,
-		url,
-		categories,
-		status,
-		nsfw: MangaContentRating::default(),
-		viewer,
-	})
+    Ok(Manga {
+        id,
+        cover,
+        title,
+        author: String::new(),
+        artist: String::new(),
+        description,
+        url,
+        categories,
+        status,
+        nsfw: MangaContentRating::default(),
+        viewer: MangaViewer::Rtl,
+    })
 }
 
 pub fn parse_chapters(html: &WNode, manga_id: &str) -> Result<Vec<Chapter>> {
-	let main_node = get_manga_page_main_node(html)?;
+    let chapters = html
+        .select(".chapter-result > article.card-chapter")
+        .into_iter()
+        .filter_map(|chapter_elem| {
+            let link_elem = chapter_elem.select("a.card-chapter__link").pop()?;
+            let href = link_elem.attr("href")?;
+            // Пример: /manga/sinmadaeje/chapters/197198132029703703/pages/1
+            let id = href
+                .split("/chapters/")
+                .nth(1)?
+                .split('/')
+                .next()?;
+            let id = id.to_string();
 
-	let chapters = main_node
-		.select(
-			"div[class~=chapters] > table > tbody > tr:has(td > a):has(td.date:not(.text-info))",
-		)
-		.into_iter()
-		.filter_map(|chapter_elem| {
-			let link_elem = chapter_elem.select("a.chapter-link").pop()?;
+            let full_title = link_elem.select("h3").pop()?.text();
+            let title = full_title
+                .split('>').last().unwrap_or(&full_title).trim().to_string();
 
-			let date_elems: Vec<_> = {
-				let chapter_repr = chapter_elem.to_str();
+            // Том и номер главы (можно парсить из текста h3)
+            let (volume, chapter) = {
+                let text = full_title.replace("Том", "").replace("Глава", "");
+                let mut vol = None;
+                let mut chap = None;
+                for part in text.split_whitespace() {
+                    if vol.is_none() && part.chars().all(|c| c.is_digit(10)) {
+                        vol = part.parse().ok();
+                    } else if chap.is_none() && part.chars().all(|c| c.is_digit(10)) {
+                        chap = part.parse().ok();
+                    }
+                }
+                (vol, chap)
+            };
 
-				chapter_repr
-					.match_indices("<td")
-					.zip(chapter_repr.match_indices("</td>"))
-					.map(|((start, _), (end, td_end))| {
-						chapter_repr[start..end + td_end.len()].to_string()
-					})
-					.filter_map(|td_repr| WNode::new(td_repr).attr("data-date-raw"))
-					.collect()
-			};
+            // Дата
+            let date_updated = chapter_elem
+                .select("span")
+                .pop()
+                .map(|n| StringRef::from(&n.text()).as_date("yyyy-MM-dd", None, None))
+                .unwrap_or(0.0);
 
-			let chapter_rel_url = link_elem.attr("href")?;
+            let url = helpers::get_chapter_url(manga_id, &id);
 
-			let id = chapter_rel_url
-				.strip_prefix(format!("/{manga_id}/").as_str())?
-				.to_string();
+            Some(Chapter {
+                id,
+                title,
+                volume: volume.unwrap_or(0),
+                chapter: chapter.unwrap_or(0),
+                date_updated,
+                scanlator: String::new(),
+                url,
+                lang: "ru".to_string(),
+            })
+        })
+        .collect();
 
-			let full_title = link_elem.text().replace(" новое", "").trim().to_string();
-			let title = {
-				let strippred_title: String = full_title
-					.chars()
-					.skip_while(|char| char.is_numeric() || char.is_whitespace() || char == &'-')
-					.collect();
-				if strippred_title.is_empty() {
-					full_title
-				} else {
-					strippred_title
-				}
-			};
-
-			let (vol_str, chap_str) = id.split_once('/')?;
-			let volume = vol_str.strip_prefix("vol")?.parse().ok()?;
-			let chapter = chap_str.parse().ok()?;
-
-			let date_updated = {
-				match date_elems.first() {
-					Some(date_updated_str) => StringRef::from(&date_updated_str).as_date(
-						"yyyy-MM-dd HH:mm:ss.SSS",
-						None,
-						None,
-					),
-					None => 0f64,
-				}
-			};
-
-			let scanlator = link_elem
-				.attr("title")
-				.unwrap_or_default()
-				.replace(" (Переводчик)", "");
-
-			let url = helpers::get_chapter_url(manga_id, &id);
-
-			Some(Chapter {
-				id,
-				title,
-				volume,
-				chapter,
-				date_updated,
-				scanlator,
-				url,
-				lang: "ru".to_string(),
-			})
-		})
-		.collect();
-
-	Ok(chapters)
+    Ok(chapters)
 }
 
 pub fn get_page_list(html: &WNode) -> Result<Vec<Page>> {
