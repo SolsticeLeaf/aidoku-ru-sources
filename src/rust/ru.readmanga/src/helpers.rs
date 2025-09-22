@@ -4,10 +4,12 @@ use aidoku::{
 	std::net::{HttpMethod, Request},
 	Manga, MangaPageResult,
 };
+use aidoku::std::defaults::defaults_get;
+
 use alloc::{string::String, vec::Vec};
 
 use crate::{
-	constants::{BASE_URL, SEARCH_OFFSET_STEP},
+	constants::SEARCH_OFFSET_STEP,
 	wrappers::WNode,
 };
 
@@ -19,7 +21,8 @@ pub fn get_html(url: &str) -> Result<WNode> {
 }
 
 pub fn get_manga_url(id: &str) -> String {
-	format!("{}/{}", BASE_URL, id)
+	let baseUrl = defaults_get("baseUrl").as_string();
+	format!("{}/{}", baseUrl, id)
 }
 
 pub fn create_manga_page_result(mangas: Vec<Manga>) -> MangaPageResult {
@@ -32,7 +35,8 @@ pub fn create_manga_page_result(mangas: Vec<Manga>) -> MangaPageResult {
 
 pub fn get_chapter_url(manga_id: &str, chapter_id: &str) -> String {
 	// mtr is 18+ skip
-	format!("{BASE_URL}/{manga_id}/{chapter_id}?mtr=true")
+	let baseUrl = defaults_get("baseUrl").as_string();
+	format!("{baseUrl}/{manga_id}/{chapter_id}?mtr=true")
 }
 
 pub fn create_parsing_error() -> AidokuError {
