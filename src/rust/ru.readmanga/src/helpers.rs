@@ -2,9 +2,9 @@ use aidoku::{
 	error::{AidokuError, AidokuErrorKind, NodeError, Result},
 	prelude::*,
 	std::net::{HttpMethod, Request},
+	std::defaults::defaults_get,
 	Manga, MangaPageResult,
 };
-use aidoku::std::defaults::defaults_get;
 use alloc::{string::String, vec::Vec};
 
 use crate::{
@@ -13,7 +13,7 @@ use crate::{
 };
 
 pub fn get_base_url() -> String {
-	defaults_get("baseUrl")?.as_string()?.read()
+	defaults_get("baseUrl")?.as_string()
 }
 
 pub fn get_html(url: &str) -> Result<WNode> {
