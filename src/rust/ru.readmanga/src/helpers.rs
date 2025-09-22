@@ -1,8 +1,8 @@
 use aidoku::{
-	error::{AidokuError, AidokuErrorKind, NodeError, Result},
-	prelude::*,
-	std::net::{HttpMethod, Request},
-	Manga, MangaPageResult,
+    error::{AidokuError, AidokuErrorKind, NodeError, Result},
+    prelude::*,
+    std::{defaults::defaults_get, net::{HttpMethod, Request}},
+    Manga, MangaPageResult,
 };
 use alloc::{string::String, vec::Vec};
 
@@ -10,6 +10,14 @@ use crate::{
 	constants::{BASE_URL, SEARCH_OFFSET_STEP},
 	wrappers::WNode,
 };
+
+pub fn get_base_url() -> String {
+    defaults_get("baseUrl")
+        .and_then(|v| v.as_string().ok())
+        .map(|s| s.read())
+        .filter(|s| !s.is_empty())
+        .unwrap_or_else(|| BASE_URL.to_string())
+}
 
 pub fn get_html(url: &str) -> Result<WNode> {
 	Request::new(url, HttpMethod::Get)
@@ -19,7 +27,7 @@ pub fn get_html(url: &str) -> Result<WNode> {
 }
 
 pub fn get_manga_url(id: &str) -> String {
-	format!("{}/{}", BASE_URL, id)
+    format!("{}/{}", get_base_url(), id)
 }
 
 pub fn create_manga_page_result(mangas: Vec<Manga>) -> MangaPageResult {
@@ -32,7 +40,7 @@ pub fn create_manga_page_result(mangas: Vec<Manga>) -> MangaPageResult {
 
 pub fn get_chapter_url(manga_id: &str, chapter_id: &str) -> String {
 	// mtr is 18+ skip
-	format!("{BASE_URL}/{manga_id}/{chapter_id}?mtr=true")
+    format!("{}/{manga_id}/{chapter_id}?mtr=true", get_base_url())
 }
 
 pub fn create_parsing_error() -> AidokuError {
