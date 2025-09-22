@@ -4,925 +4,119 @@
   },
   {
     "type": "group",
-    "name": "Статус",
-    "filters": [
-      {
-        "type": "check",
-        "name": "Выходит",
-        "id": "1|ongoing"
-      },
-      {
-        "type": "check",
-        "name": "Издано",
-        "id": "1|released"
-      },
-      {
-        "type": "check",
-        "name": "Переводится",
-        "id": "1|continued"
-      },
-      {
-        "type": "check",
-        "name": "Завершено",
-        "id": "1|completed"
-      },
-      {
-        "type": "check",
-        "name": "Без 18+",
-        "id": "1|no18plus"
-      }
-    ]
-  },
-  {
-    "type": "group",
-    "name": "Тип",
-    "filters": [
-      {
-        "type": "check",
-        "name": "Манга",
-        "id": "0|manga"
-      },
-      {
-        "type": "check",
-        "name": "Манхва",
-        "id": "0|manhwa"
-      },
-      {
-        "type": "check",
-        "name": "Маньхуа",
-        "id": "0|manhua"
-      },
-      {
-        "type": "check",
-        "name": "Ваншот",
-        "id": "0|one_shot"
-      },
-      {
-        "type": "check",
-        "name": "Комикс",
-        "id": "0|comics"
-      }
-    ]
-  },
-  {
-    "type": "group",
     "name": "Жанры",
     "filters": [
-      {
-        "type": "genre",
-        "name": "Безумие",
-        "id": "Dementia",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "Боевые искусства",
-        "id": "Martial Arts",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "В цвете",
-        "id": "Color",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "Вампиры",
-        "id": "Vampire",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "Веб",
-        "id": "Web",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "Гарем",
-        "id": "Harem",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "Героическое фэнтези",
-        "id": "Heroic Fantasy",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "Демоны",
-        "id": "Demons",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "Детектив",
-        "id": "Mystery",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "Дзёсей",
-        "id": "Josei",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "Драма",
-        "id": "Drama",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "Ёнкома",
-        "id": "Yonkoma",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "Игры",
-        "id": "Game",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "Исекай",
-        "id": "Isekai",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "Исторический",
-        "id": "Historical",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "Комедия",
-        "id": "Comedy",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "Космос",
-        "id": "Space",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "ЛитRPG",
-        "id": "LitRPG",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "Магия",
-        "id": "Magic",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "Меха",
-        "id": "Mecha",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "Мистика",
-        "id": "Mystic",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "Музыка",
-        "id": "Music",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "Научная фантастика",
-        "id": "Sci-Fi",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "Пародия",
-        "id": "Parody",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "Повседневность",
-        "id": "Slice of Life",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "Постапокалиптика",
-        "id": "Post Apocalyptic",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "Приключения",
-        "id": "Adventure",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "Психологическое",
-        "id": "Psychological",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "Романтика",
-        "id": "Romance",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "Самураи",
-        "id": "Samurai",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "Сверхъестественное",
-        "id": "Supernatural",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "Сёдзе",
-        "id": "Shoujo",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "Сейнен",
-        "id": "Seinen",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "Сёнен",
-        "id": "Shounen",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "Спорт",
-        "id": "Sports",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "Супер сила",
-        "id": "Super Power",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "Трагедия",
-        "id": "Tragedy",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "Триллер",
-        "id": "Thriller",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "Ужасы",
-        "id": "Horror",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "Фантастика",
-        "id": "Fiction",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "Фэнтези",
-        "id": "Fantasy",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "Хентай",
-        "id": "Hentai",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "Школа",
-        "id": "School",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "Экшен",
-        "id": "Action",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "Этти",
-        "id": "Ecchi",
-        "canExclude": false
-      }
+      { "type": "genre", "name": "боевик", "id": "el_2155", "canExclude": true },
+      { "type": "genre", "name": "боевые искусства", "id": "el_2143", "canExclude": true },
+      { "type": "genre", "name": "гарем", "id": "el_2142", "canExclude": true },
+      { "type": "genre", "name": "гендерная интрига", "id": "el_2156", "canExclude": true },
+      { "type": "genre", "name": "детектив", "id": "el_2152", "canExclude": true },
+      { "type": "genre", "name": "дзёсей", "id": "el_2158", "canExclude": true },
+      { "type": "genre", "name": "драма", "id": "el_2118", "canExclude": true },
+      { "type": "genre", "name": "история", "id": "el_2119", "canExclude": true },
+      { "type": "genre", "name": "исэкай", "id": "el_9450", "canExclude": true },
+      { "type": "genre", "name": "киберпанк", "id": "el_8032", "canExclude": true },
+      { "type": "genre", "name": "кодомо", "id": "el_2137", "canExclude": true },
+      { "type": "genre", "name": "комедия", "id": "el_2136", "canExclude": true },
+      { "type": "genre", "name": "музыка", "id": "el_9514", "canExclude": true },
+      { "type": "genre", "name": "научная фантастика", "id": "el_2133", "canExclude": true },
+      { "type": "genre", "name": "пародия", "id": "el_9524", "canExclude": true },
+      { "type": "genre", "name": "повседневность", "id": "el_2135", "canExclude": true },
+      { "type": "genre", "name": "постапокалиптика", "id": "el_2151", "canExclude": true },
+      { "type": "genre", "name": "приключения", "id": "el_2130", "canExclude": true },
+      { "type": "genre", "name": "психология", "id": "el_2144", "canExclude": true },
+      { "type": "genre", "name": "романтика", "id": "el_2121", "canExclude": true },
+      { "type": "genre", "name": "сверхъестественное", "id": "el_2159", "canExclude": true },
+      { "type": "genre", "name": "сёдзё", "id": "el_2122", "canExclude": true },
+      { "type": "genre", "name": "сёнэн", "id": "el_2134", "canExclude": true },
+      { "type": "genre", "name": "спорт", "id": "el_2129", "canExclude": true },
+      { "type": "genre", "name": "сэйнэн", "id": "el_2138", "canExclude": true },
+      { "type": "genre", "name": "трагедия", "id": "el_2153", "canExclude": true },
+      { "type": "genre", "name": "триллер", "id": "el_2150", "canExclude": true },
+      { "type": "genre", "name": "ужасы", "id": "el_2125", "canExclude": true },
+      { "type": "genre", "name": "фэнтези", "id": "el_2131", "canExclude": true },
+      { "type": "genre", "name": "школа", "id": "el_2127", "canExclude": true },
+      { "type": "genre", "name": "этти", "id": "el_2149", "canExclude": true }
     ]
   },
   {
     "type": "group",
-    "name": "Теги",
+    "name": "Категории",
     "filters": [
-      {
-        "type": "genre",
-        "name": "#Азартные игры",
-        "id": "Gambling",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "#Алхимия",
-        "id": "Alchemy",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "#Ангелы",
-        "id": "Angels",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "#Антигерой",
-        "id": "Anti-hero",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "#Антиутопия",
-        "id": "Dystopia",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "#Апокалипсис",
-        "id": "Apocalypse",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "#Аристократия",
-        "id": "Aristocracy",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "#Армия",
-        "id": "Army",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "#Артефакты",
-        "id": "Artifacts",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "#Боги",
-        "id": "Gods",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "#Бои на мечах",
-        "id": "Sword Fighting",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "#Борьба за власть",
-        "id": "Power Struggle",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "#Брат и сестра",
-        "id": "Brother and Sister",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "#Будущее",
-        "id": "Future",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "#Ведьма",
-        "id": "Witch",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "#Вестерн",
-        "id": "Western",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "#Видеоигры",
-        "id": "Video Games",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "#Виртуальная реальность",
-        "id": "Virtual Reality",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "#Владыка демонов",
-        "id": "Demon Lord",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "#Военные",
-        "id": "Military",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "#Война",
-        "id": "War",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "#Волшебники / маги",
-        "id": "Wizards / Mages",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "#Волшебные существа",
-        "id": "Magical Creatures",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "#Воспоминания из другого мира",
-        "id": "Memories from Another World",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "#Выживание",
-        "id": "Survival",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "#ГГ женщина",
-        "id": "Female MC",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "#ГГ имба",
-        "id": "IMBA MC",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "#ГГ мужчина",
-        "id": "Male MC",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "#Геймеры",
-        "id": "Gamers",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "#Гильдии",
-        "id": "Guilds",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "#Глупый ГГ",
-        "id": "Stupid MC",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "#Гоблины",
-        "id": "Goblins",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "#Горничные",
-        "id": "Maids",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "#Гяру",
-        "id": "Gyaru",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "#Драконы",
-        "id": "Dragons",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "#Дружба",
-        "id": "Friendship",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "#Жестокий мир",
-        "id": "Cruel World",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "#Животные компаньоны",
-        "id": "Animal Companions",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "#Завоевание мира",
-        "id": "World Conquest",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "#Зверолюди",
-        "id": "Beastmen",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "#Злые духи",
-        "id": "Evil Spirits",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "#Зомби",
-        "id": "Zombies",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "#Игровые элементы",
-        "id": "Gaming elements",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "#Империи",
-        "id": "Empires",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "#Квесты",
-        "id": "Quests",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "#Кулинария",
-        "id": "Cooking",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "#Культивирование",
-        "id": "Cultivation",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "#Легендарное оружие",
-        "id": "Legendary weapons",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "#Магическая академия",
-        "id": "Magic academy",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "#Мафия",
-        "id": "Mafia",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "#Медицина",
-        "id": "Medicine",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "#Месть",
-        "id": "Revenge",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "#Моли",
-        "id": "Moli",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "#Монстродевушки",
-        "id": "Monster girls",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "#Монстры",
-        "id": "Monsters",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "#Мурим",
-        "id": "Murim",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "#Навыки / способности",
-        "id": "Skills / abilities",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "#Наёмники",
-        "id": "Mercenaries",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "#Насилие / жестокость",
-        "id": "Violence / cruelty",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "#Нежить",
-        "id": "Undead",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "#Ниндзя",
-        "id": "Ninja",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "#Обмен телами",
-        "id": "Body swap",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "#Обратный Гарем",
-        "id": "Reverse Harem",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "#Огнестрельное оружие",
-        "id": "Firearms",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "#Офисные Работники",
-        "id": "Office workers",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "#Пираты",
-        "id": "Pirates",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "#Подземелья",
-        "id": "Dungeons",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "#Политика",
-        "id": "Politics",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "#Полиция",
-        "id": "Police",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "#Полноцветный",
-        "id": "Full color",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "#Путешествие во времени",
-        "id": "Time travel",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "#Рабы",
-        "id": "Slaves",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "#Разумные расы",
-        "id": "Sentient races",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "#Ранги силы",
-        "id": "Power ranks",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "#Реинкарнация",
-        "id": "Reincarnation",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "#Роботы",
-        "id": "Robots",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "#Рыцари",
-        "id": "Knights",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "#Система",
-        "id": "System",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "#Скрытие личности",
-        "id": "Identity hiding",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "#Спасение мира",
-        "id": "Saving the world",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "#Спортивное тело",
-        "id": "Sports body",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "#Средневековье",
-        "id": "Middle Ages",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "#Стимпанк",
-        "id": "Steampunk",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "#Супергерои",
-        "id": "Superheroes",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "#Традиционные игры",
-        "id": "Traditional games",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "#Умный ГГ",
-        "id": "Smart GG",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "#Учитель",
-        "id": "Teacher",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "#Философия",
-        "id": "Philosophy",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "#Хикикомори",
-        "id": "Hikikomori",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "#Холодное оружие",
-        "id": "Cold weapons",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "#Шантаж",
-        "id": "Blackmail",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "#Эльфы",
-        "id": "Elves",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "#Якудза",
-        "id": "Yakuza",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "#Яндере",
-        "id": "Yandere",
-        "canExclude": false
-      },
-      {
-        "type": "genre",
-        "name": "#Япония",
-        "id": "Japan",
-        "canExclude": false
-      }
+      { "type": "check", "name": "OEL-манга", "id": "el_9577" },
+      { "type": "check", "name": "Арт", "id": "el_5685" },
+      { "type": "check", "name": "Додзинси", "id": "el_2141" },
+      { "type": "check", "name": "Ёнкома", "id": "el_2161" },
+      { "type": "check", "name": "Комикс", "id": "el_3515" },
+      { "type": "check", "name": "Манга", "id": "el_9451" },
+      { "type": "check", "name": "Манхва", "id": "el_3001" },
+      { "type": "check", "name": "Маньхуа", "id": "el_3002" }
+    ]
+  },
+  {
+    "type": "group",
+    "name": "Возрастная рекомендация",
+    "filters": [
+      { "type": "check", "name": "G", "id": "el_6180" },
+      { "type": "check", "name": "PG", "id": "el_6179" },
+      { "type": "check", "name": "PG-13", "id": "el_6181" },
+      { "type": "check", "name": "R", "id": "el_9847" },
+      { "type": "check", "name": "NC-17", "id": "el_9848" }
+    ]
+  },
+  {
+    "type": "group",
+    "name": "Прочее",
+    "filters": [
+      { "type": "check", "name": "В цвете", "id": "el_7290" },
+      { "type": "check", "name": "Веб", "id": "el_2160" },
+      { "type": "check", "name": "На экранах", "id": "el_9795" },
+      { "type": "check", "name": "Сборник", "id": "el_2157" }
+    ]
+  },
+  {
+    "type": "group",
+    "name": "Фильтры",
+    "filters": [
+      { "type": "check", "name": "Высокий рейтинг", "id": "s_high_rate" },
+      { "type": "check", "name": "Сингл", "id": "s_single" },
+      { "type": "check", "name": "Для взрослых", "id": "s_mature" },
+      { "type": "check", "name": "Переведено", "id": "s_translated" },
+      { "type": "check", "name": "Заброшен перевод", "id": "s_abandoned_popular" },
+      { "type": "check", "name": "Длинная", "id": "s_many_chapters" },
+      { "type": "check", "name": "Ожидает загрузки", "id": "s_wait_upload" },
+      { "type": "check", "name": "Белые жанры", "id": "s_not_pessimized" }
+    ]
+  },
+  {
+    "type": "group",
+    "name": "Статус выхода",
+    "filters": [
+      { "type": "check", "name": "Запланирован", "id": "prod_PLANNED" },
+      { "type": "check", "name": "Продолжается", "id": "prod_PROGRESS" },
+      { "type": "check", "name": "Приостановлен", "id": "prod_POSTPONED" },
+      { "type": "check", "name": "Отменён", "id": "prod_CANCELED" },
+      { "type": "check", "name": "Завершён", "id": "prod_FINISHED" },
+      { "type": "check", "name": "Не окончен", "id": "prod_NON_FINISHED" }
+    ]
+  },
+  {
+    "type": "group",
+    "name": "Статус перевода",
+    "filters": [
+      { "type": "check", "name": "Отсутствует", "id": "trans_NONE" },
+      { "type": "check", "name": "Начат", "id": "trans_STARTED" },
+      { "type": "check", "name": "Продолжается", "id": "trans_PROGRESS" },
+      { "type": "check", "name": "Приостановлен", "id": "trans_POSTPONED" },
+      { "type": "check", "name": "Завершён", "id": "trans_FINISHED" },
+      { "type": "check", "name": "Нет необходимости", "id": "trans_NO_NEED" }
     ]
   },
   {
     "type": "sort",
-    "name": "Упорядочить",
+    "name": "Сортировка",
     "canAscend": false,
-    "options": ["По добавлению", "По алфавиту", "По популярности", "По обновлению"],
-    "default": {
-      "index": 0
-    }
+    "options": ["по популярности", "по алфавиту", "по году написания", "популярность сейчас", "по рейтингу", "новинки", "по дате обновления"],
+    "default": { "index": 0 }
   }
 ]

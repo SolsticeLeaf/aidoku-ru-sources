@@ -429,37 +429,57 @@ pub fn get_page_list(html: &WNode) -> Result<Vec<Page>> {
 }
 
 pub fn get_filter_url(filters: &[Filter], sorting: &Sorting, page: i32) -> Result<String> {
-	fn get_handler(operation: &'static str) -> Box<dyn Fn(AidokuError) -> AidokuError> {
-		Box::new(move |err: AidokuError| {
-			println!("Error {:?} while {}", err.reason, operation);
-			err
-		})
-	}
+    fn get_handler(operation: &'static str) -> Box<dyn Fn(AidokuError) -> AidokuError> {
+        Box::new(move |err: AidokuError| {
+            println!("Error {:?} while {}", err.reason, operation);
+            err
+        })
+    }
 
-	let filter_parts: Vec<_> = filters
-		.iter()
-		.filter_map(|filter| match filter.kind {
-			FilterType::Title => filter
-				.value
-				.clone()
-				.as_string()
-				.map_err(get_handler("casting to string"))
-				.ok()
-				.map(|title| format!("q={}", encode_uri(title.read()))),
-			_ => None,
-		})
-		.collect();
+    let mut params: Vec<String> = Vec::new();
 
-	let offset = format!("offset={}", (page - 1) * SEARCH_OFFSET_STEP);
-	let sort = format!("sortType={}", sorting);
+    // Base required params
+    params.push(format!("offset={}", (page - 1) * SEARCH_OFFSET_STEP));
+    params.push(format!("sortType={}", sorting));
 
-	Ok(format!(
-		"{}{}",
-		BASE_SEARCH_URL,
-		chain!(once(offset), once(sort), filter_parts.into_iter())
-			.intersperse("&".to_string())
-			.collect::<String>()
-	))
+    for filter in filters {
+        match filter.kind {
+            FilterType::Title => {
+                if let Ok(title_ref) = filter.value.clone().as_string() {
+                    params.push(format!("q={}", encode_uri(title_ref.read())));
+                }
+            }
+            FilterType::Genre => {
+                if let Ok(id_ref) = filter.object.get("id").as_string() {
+                    let id = id_ref.read();
+                    match filter.value.as_int().unwrap_or(-1) {
+                        0 => params.push(format!("{}=out", id)), // excluded
+                        1 => params.push(format!("{}=in", id)),  // included
+                        _ => {}
+                    }
+                }
+            }
+            FilterType::Check => {
+                if let Ok(id_ref) = filter.object.get("id").as_string() {
+                    let id = id_ref.read();
+                    // Any checked option => add `=in`
+                    if filter.value.as_int().unwrap_or(0) != 0 {
+                        params.push(format!("{}=in", id));
+                    }
+                }
+            }
+            _ => {}
+        }
+    }
+
+    // Ensure title (q=) appears first if present (optional ordering nicety)
+    params.sort_by(|a, b| {
+        let a_is_q = a.starts_with("q=");
+        let b_is_q = b.starts_with("q=");
+        b_is_q.cmp(&a_is_q) // place q= before others
+    });
+
+    Ok(format!("{}{}", BASE_SEARCH_URL, params.join("&")))
 }
 
 pub fn parse_incoming_url(url: &str) -> Result<DeepLink> {

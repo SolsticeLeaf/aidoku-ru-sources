@@ -1,0 +1,1293 @@
+<!DOCTYPE html>
+
+<html lang="ru" xml:lang="ru" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="-1" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>Поиск манги по названию и параметрам - RM.me</title>
+    <script>
+      window.yaContextCb = window.yaContextCb || [];
+    </script>
+    <script src="https://yandex.ru/ads/system/context.js" async></script>
+
+    <meta name="yandex-verification" content="3e19d978504ae05f" />
+    <meta name="google-site-verification" content="kJUDHzAoYqdS0DSdFTDzCfhTcP5C5HBmtTr4KHDw0sk" />
+
+    <link
+      rel="preload"
+      as="font"
+      crossorigin="anonymous"
+      href="https://resrmm.rmr.rocks/static/webfonts/fa-regular-400-5d340f3ceebd2d2032994a2ef5cf52ce.woff2" />
+    <link rel="preload" as="script" href="https://resrmm.rmr.rocks/static/application-c86c2db96ba5d915178cc532a79b16de.js" />
+
+    <link rel="shortcut icon" type="image/x-icon" href="https://resrmm.rmr.rocks/static/favicon-4772904730a7e0fa0da621428427d341.ico" />
+    <link rel="shortcut icon" type="image/x-icon" sizes="120x120" href="https://resrmm.rmr.rocks/static/favicon-0f10a9149fbafd319daac6f082277d15.svg" />
+    <link rel="apple-touch-icon" href="https://resrmm.rmr.rocks/static/apple-touch-icon-3162037c9df9f28dca0f9a4092cb0f65.png" />
+
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="msapplication-config" content="none" />
+
+    <script type="text/javascript">
+      var SERVER_API_URL = '/api';
+      var X_URL = 'https://3.grouple.co';
+      var X_API_URL = 'https://api.rmr.rocks';
+
+      var RM_site_id = 13;
+
+      function forumSsoCallback(token) {
+        jQuery.ajax({
+          type: 'POST',
+          data: { tk: token },
+          url: '/internal/auth/ajax',
+          success: function (data, textStatus) {
+            jQuery('#accountMenu').html(data);
+          },
+          error: function (XMLHttpRequest, textStatus, errorThrown) {},
+        });
+      }
+    </script>
+
+    <link rel="stylesheet" href="https://resrmm.rmr.rocks/static/application-0c545ed9132187806b706d9b73b864e6.css" />
+    <script type="text/javascript" src="https://resrmm.rmr.rocks/static/application-c86c2db96ba5d915178cc532a79b16de.js"></script>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no" />
+
+    <meta name="description" content="Поисковик по сайту, автор, жанры, название. Легко найти мангу" />
+
+    <script type="text/javascript">
+      $(function () {
+        if (window.current_page_is_reader) return;
+
+        if (Math.random() > 0.5) {
+          //rm_h.layout.addPageEars('https://staticgr.rmr.rocks/uploads/pics/13/70/487_o.png', 'https://readmanga.io/kosmicheskaia_stanciia_russkaia_ruletka' );
+        }
+        if (Math.random() < 0.5) {
+          //rm_h.layout.addPageTop('https://staticgr.rmr.rocks/uploads/pics/13/70/488_o.jpg', 'https://readmanga.io/kosmicheskaia_stanciia_russkaia_ruletka' );
+        }
+      });
+    </script>
+  </head>
+
+  <body>
+    <script>
+      rm_h.theme.default = 'light';
+
+      rm_h.settings.restoreUserSettings();
+    </script>
+
+    <div id="wrap">
+      <script></script>
+
+      <header class="navbar navbar-dark bg-dark navbar--showed">
+        <div class="header container">
+          <div class="header-wrapper">
+            <a href="/" class="navbar-brand non-hover" title="Ридманга">
+              <img
+                src="https://resrmm.rmr.rocks/static/logo-40326e8b76b0db610fa47f0801711aea.png"
+                width="250"
+                height="45"
+                class="d-none d-xl-inline-block logo"
+                alt="Манга и Манхва онлайн" />
+              <img
+                src="https://resrmm.rmr.rocks/static/logo_m-1b2831fef94e15ded4ca97581ad07213.png"
+                width="80"
+                height="40"
+                class="d-inline-block d-xl-none logo"
+                alt="Манга и Манхва онлайн" />
+            </a>
+
+            <span class="nav-link header-item federation-toggler">
+              <i class="fa fa-box-heart fa-lg fa-fw federation-menu-open"></i>
+            </span>
+
+            <div class="header-content">
+              <a href="/list" class="header-item item-list" data-toggle="tooltip" title="каталог манги">
+                <i class="fa fa-lg fa-books"></i>
+              </a>
+
+              <div class="header-item sub-menu-open" data-toggle="tooltip" title="Жми, не бойся!">
+                <i class="fa fa-lgg fa-caret-down d-none d-sm-inline-block"></i>
+              </div>
+
+              <div class="mobile-nav">
+                <a class="header-item d-flex d-sm-none" href="https://3.grouple.co/private/bookmarks" data-toggle="tooltip" title="Закладки">
+                  <span class="fa fa-lg fa-bookmark"></span>
+                </a>
+                <span class="header-item d-flex d-sm-none notifications-list-btn" data-position="bottom">
+                  <span class="fa fa-lg fa-bell">
+                    <span class="badge badge-info noti-count"></span>
+                  </span>
+                  <span class="navbar-text">Новости</span>
+                </span>
+
+                <div class="header-item d-flex d-sm-none">
+                  <a href="/search" class="">
+                    <i class="fa fa-lg fa-search"></i>
+                  </a>
+                </div>
+              </div>
+            </div>
+
+            <div class="header-right">
+              <div class="account-menu">
+                <script>
+                  window.current_user_country_code = 'NL';
+                  window.is_bot = rm_h.utils.isBot();
+                </script>
+
+                <div id="accountMenu" class="dropdown-menu keep-open-on-click" role="menu">
+                  <div class="dropdown-menu">
+                    <a class="dropdown-item" href="https://3.grouple.co/internal/auth/register?siteId=13" target="_blank"> Регистрация </a>
+                    <a class="dropdown-item" href="/internal/auth"> Вход </a>
+
+                    <div class="dropdown-divider"></div>
+
+                    <a href="/internal/add" title="Добавить мангу и все остальное на сайт" class="dropdown-item"> Добавить мангу на сайт </a>
+
+                    <div class="dropdown-divider"></div>
+
+                    <div class="dropdown-divider"></div>
+
+                    <div class="dropdown-item">
+                      <div class="theme-controller">
+                        <div class="theme-toggle"></div>
+
+                        <button onclick="rm_h.settings.changeTheme('sk1');" class="skinButton skin1"><!----></button>
+
+                        <button onclick="rm_h.settings.changeTheme('sk2');" class="skinButton skin2"><!----></button>
+
+                        <button onclick="rm_h.settings.changeTheme('sk3');" class="skinButton skin3"><!----></button>
+
+                        <button onclick="rm_h.settings.changeTheme('sk4');" class="skinButton skin4"><!----></button>
+
+                        <button onclick="rm_h.settings.changeTheme('sk5');" class="skinButton skin5"><!----></button>
+
+                        <button onclick="rm_h.settings.changeTheme('sk8');" class="skinButton skin8"><!----></button>
+
+                        <button onclick="rm_h.settings.changeTheme('sk9');" class="skinButton skin9"><!----></button>
+                      </div>
+                    </div>
+
+                    <div class="dropdown-sites-container">
+                      <div class="dropdown-divider"></div>
+                      <div class="dropdown-sites">
+                        <a href="https://3.grouple.co" title="Закладки, активности, общение">GroupLe</a>
+
+                        <a href="https://a.zazaza.me" title="Читай легальную мангу" target="_blank">ReadManga</a>
+
+                        <a href="/internal/redirect?type=site&amp;id=21" title="Читай мангу по-взрослому" target="_blank">SeiManga</a>
+
+                        <a href="https://b.doramatv.one" title="Смотри и обсуждай Дораму онлайн" target="_blank">DoramaTV</a>
+
+                        <a href="https://1.librebook.me" title="Читай книги онлайн" target="_blank">LibreBook</a>
+
+                        <a href="/internal/redirect?type=site&amp;id=2" title="Читай мангу по-взрослому" target="_blank">MintManga</a>
+
+                        <a href="https://1.selfmanga.live" title="Создавай и читай мангу" target="_blank">SelfManga</a>
+
+                        <a href="https://rumix.me" title="Читай лицензионную мангу" target="_blank">RuMix</a>
+
+                        <a href="https://1.selflib.me" title="Пиши и читай самиздат" target="_blank">SelfLib</a>
+
+                        <a href="https://22.findanime.me/list?sortType=created" title="Смотри и обсуждай аниме онлайн" target="_blank">FindAnime</a>
+
+                        <a href="/internal/redirect?type=site&amp;id=9" title="Смотри сериалы" target="_blank">Mose</a>
+
+                        <a href="https://mult2.koro.life" title="Смотри мультфильмы" target="_blank">Mult</a>
+
+                        <a href="https://web.usagi.one" title="Читай всю мангу" target="_blank">Usagi</a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <a href="https://3.grouple.co/internal/subscription" class="header-item" data-toggle="tooltip" title="Купить премиум" target="_self">
+                  <span class="fa-stack">
+                    <i class="fa-solid fa-square fa-stack-2x gold-status"></i>
+                    <i class="fa fa-crown fa-stack-1x fa-inverse"></i>
+                  </span>
+                  <span class="navbar-text">Купить премиум</span>
+                </a>
+
+                <div class="header-item disable-mobile">
+                  <a class="strong nav-link" href="https://3.grouple.co/internal/auth/register?siteId=13" target="_blank">Регистрация</a>
+                </div>
+                <div class="header-item disable-mobile">
+                  <a class="strong nav-link login-link" href="/internal/auth">Вход</a>
+                </div>
+
+                <script></script>
+              </div>
+
+              <div class="header-right-desktop">
+                <form action="/search" method="post" class="searcher ml-sm-2">
+                  <div id="fast-search" class="fast-search input-group">
+                    <select id="q" placeholder="Название манги или автор" class="form-control head-suggestion" maxlength="50"></select>
+                    <span class="input-group-append">
+                      <button type="submit" title="Поиск" class="btn btn-secondary">
+                        <span class="fa fa-search"></span>
+                      </button>
+                    </span>
+                    <a href="/search/advanced" class="fast-search__advanced">
+                      <i class="far fa-sliders-h"></i>
+                    </a>
+
+                    <div class="pills">
+                      <label class="pill">
+                        <input checked type="checkbox" name="fast-filter" value="CREATION" />
+                        <div class="pill-text">манга</div>
+                      </label>
+                      <label class="pill">
+                        <input type="checkbox" name="fast-filter" value="PERSON" />
+                        <div class="pill-text">персоны</div>
+                      </label>
+
+                      <label class="pill">
+                        <input checked type="checkbox" name="fast-filter" value="FEDERATION_MANGA" />
+                        <div class="pill-text">другие сайты</div>
+                      </label>
+
+                      <label class="pill">
+                        <input type="checkbox" name="fast-filter" value="COLLECTION" />
+                        <div class="pill-text">коллекции</div>
+                      </label>
+                      <label class="pill">
+                        <input type="checkbox" name="fast-filter" value="ANOTHER" />
+                        <div class="pill-text">прочее</div>
+                      </label>
+                    </div>
+                  </div>
+                </form>
+              </div>
+
+              <div class="header-right-mobile"></div>
+
+              <button class="navbar-toggler collapsed" onclick="rm_h.mobileUserMenu.toggle()" aria-expanded="false" aria-label="Меню">
+                <i class="fa fa-user-circle fa-lg"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="header-other">
+            <div class="federation-nav" style="display: none">
+              <div class="container">
+                <a href="https://3.grouple.co" title="Закладки, активности, общение">GroupLe</a>
+
+                <a href="https://a.zazaza.me" title="Читай легальную мангу" target="_blank">ReadManga</a>
+
+                <a href="/internal/redirect?type=site&amp;id=21" title="Читай мангу по-взрослому" target="_blank">SeiManga</a>
+
+                <a href="https://b.doramatv.one" title="Смотри и обсуждай Дораму онлайн" target="_blank">DoramaTV</a>
+
+                <a href="https://1.librebook.me" title="Читай книги онлайн" target="_blank">LibreBook</a>
+
+                <a href="/internal/redirect?type=site&amp;id=2" title="Читай мангу по-взрослому" target="_blank">MintManga</a>
+
+                <a href="https://1.selfmanga.live" title="Создавай и читай мангу" target="_blank">SelfManga</a>
+
+                <a href="https://rumix.me" title="Читай лицензионную мангу" target="_blank">RuMix</a>
+
+                <a href="https://1.selflib.me" title="Пиши и читай самиздат" target="_blank">SelfLib</a>
+
+                <a href="https://22.findanime.me/list?sortType=created" title="Смотри и обсуждай аниме онлайн" target="_blank">FindAnime</a>
+
+                <a href="/internal/redirect?type=site&amp;id=9" title="Смотри сериалы" target="_blank">Mose</a>
+
+                <a href="https://mult2.koro.life" title="Смотри мультфильмы" target="_blank">Mult</a>
+
+                <a href="https://web.usagi.one" title="Читай всю мангу" target="_blank">Usagi</a>
+              </div>
+            </div>
+
+            <div class="second-nav hide">
+              <div class="container">
+                <div class="nav-sub-menu">
+                  <div class="row">
+                    <div class="col-md-3 col-6">
+                      <ul>
+                        <li>
+                          <a href="/list?sortType=updated"><i class="fa fa-fw fa-books"></i> Каталог</a>
+                        </li>
+
+                        <li>
+                          <a href="/list/category/manga" class="element-link">Манга</a>
+                        </li>
+
+                        <li>
+                          <a href="/list/category/manhwa" class="element-link">Манхва</a>
+                        </li>
+
+                        <li>
+                          <a href="/list/category/manhua" class="element-link">Маньхуа</a>
+                        </li>
+
+                        <li>
+                          <a href="/list/category/doujinshi" class="element-link">Додзинси</a>
+                        </li>
+
+                        <li>
+                          <a href="/list/category/comix" class="element-link">Комикс</a>
+                        </li>
+
+                        <li>
+                          <a href="/list/category/yonkoma" class="element-link">Ёнкома</a>
+                        </li>
+
+                        <li>
+                          <a href="/list/category/amerimanga" class="element-link">OEL-манга</a>
+                        </li>
+
+                        <li>
+                          <a href="/list/category/art" class="element-link">Арт</a>
+                        </li>
+                      </ul>
+                    </div>
+
+                    <div class="col-md-3 col-6">
+                      <ul>
+                        <li>
+                          <a href="/news/calendar/month"><i class="fa fa-fw fa-calendar-check"></i> Календарь</a>
+                        </li>
+                        <li>
+                          <a href="/list?sortType=created"><i class="fa fa-fw fa-rss"></i> Обновления</a>
+                        </li>
+                        <li>
+                          <span onclick="rm_h.menuManager.closeByClass(RmNavMenu); rm_h.xuser.openListModal('#RECENT_CHAPTERS')" class="js-link"
+                            ><i class="fa fa-fw fa-history"></i> Вы читали</span
+                          >
+                        </li>
+                        <li>
+                          <a href="/list?sortType=popularity"><i class="fa fa-fw fa-newspaper"></i> Сейчас читают</a>
+                        </li>
+                        <li>
+                          <a href="/recommendations/index" title="Персональные рекомендации"><i class="fa fa-fw fa-thumbs-up"></i> Рекомендации</a>
+                        </li>
+                        <li>
+                          <a href="/internal/random"><i class="fa fa-fw fa-dice"></i> Случайная манга</a>
+                        </li>
+                      </ul>
+                    </div>
+
+                    <div class="col-md-3 col-6">
+                      <ul>
+                        <li>
+                          <a href="/list/genres/sort_name"><i class="fa fa-fw fa-pen-circle"></i> Жанры</a>
+                        </li>
+                        <li>
+                          <a href="/list/tags/sort_name"><i class="fa fa-fw fa-tags"></i> Теги</a>
+                        </li>
+
+                        <li><a href="/list/authors/sort_name">Авторы</a></li>
+                      </ul>
+                    </div>
+
+                    <div class="col-md-3 col-6">
+                      <ul>
+                        <li>
+                          <a href="/news/allnews"><i class="fa fa-fw fa-newspaper"></i> Новости</a>
+                        </li>
+                        <li>
+                          <a href="/collection"><i class="fa fa-fw fa-layer-group"></i> Коллекции</a>
+                        </li>
+                        <li>
+                          <a href="/review/list"><i class="fa fa-fw fa-comments"></i> Отзывы</a>
+                        </li>
+                        <li>
+                          <a href="/quote"><i class="fa fa-fw fa-square-quote"></i> Цитаты</a>
+                        </li>
+                        <li>
+                          <a href="/collection?challenge=true"><i class="fa fa-fw fa-check-circle"></i> Вызовы</a>
+                        </li>
+                        <li>
+                          <a href="/collection?battle=true"><i class="fa fa-fw fa-helmet-battle"></i> Битвы</a>
+                        </li>
+                        <li>
+                          <span class="js-link" onclick="rm_h.menuManager.closeByClass(RmNavMenu); rm_h.guides.init('index', event);"
+                            ><i class="fa fa-fw fa-question-square"></i> Путеводитель по странице</span
+                          >
+                        </li>
+                        <li><a href="/list?sortType=rate&filter=sale" title="Купить мангу онлайн">Лицензия</a></li>
+                        <li><a href="https://librebook.me" title="Читай и обсуждай книги онлайн">Книги</a></li>
+                        <li></li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+
+                <script type="text/javascript">
+                  rm_h.navMenu.process();
+                </script>
+              </div>
+            </div>
+
+            <div id="navbar-menu" class="collapse navbar-collapse"></div>
+          </div>
+        </div>
+      </header>
+      <script>
+        rm_h.layout.initEverything();
+      </script>
+
+      <div class="pageBlock container" id="mangaBox">
+        <div class="co_ba top_ba">
+          <noindex>
+            <script>
+              decodeBaBlocks(
+                'PHN0eWxlIHR5cGU9InRleHQvY3NzIj4NCiAgIC5jb19iYS50b3BfYmEge21heC1oZWlnaHQ6IDEyMHB4O21pbi1oZWlnaHQ6IDBweDt9DQo8L3N0eWxlPg0KDQoNCjwhLS0gWWFuZGV4LlJUQiBSLUEtMTk2MTI4OS0zIC0tPg0KPGRpdiBpZD0ieWFuZGV4X3J0Yl9SLUEtMTk2MTI4OS0zIj48L2Rpdj4NCg==',
+                'PHN0eWxlIHR5cGU9InRleHQvY3NzIj4NCiAgIC5jb19iYS50b3BfYmEge21heC1oZWlnaHQ6IDEyMHB4O21pbi1oZWlnaHQ6IDBweDt9DQo8L3N0eWxlPg0KDQoNCjwhLS0gWWFuZGV4LlJUQiBSLUEtMTk2MTI4OS0xIC0tPg0KPGRpdiBpZD0ieWFuZGV4X3J0Yl9SLUEtMTk2MTI4OS0xIj48L2Rpdj4NCg==',
+                '',
+                ''
+              );
+            </script>
+          </noindex>
+        </div>
+
+        <div class="leftContent">
+          <h1>
+            Продвинутый поиск по манге
+
+            <small class="text-muted"><a href="/search">простой</a></small>
+          </h1>
+          <form
+            onsubmit="jQuery.ajax({type:'GET',data:jQuery(this).serialize(), url:'/search/advancedResults',success:function(data,textStatus){jQuery('#advanced-results').html(data);rm_h.search.processAdvancedResults();},error:function(XMLHttpRequest,textStatus,errorThrown){}});return false"
+            method="post"
+            action="/search/advancedResults"
+            class="search-form search-form-advanced"
+            id="advanced">
+            <div class="form-group row">
+              <div class="col-sm-12">
+                <input
+                  type="text"
+                  name="q"
+                  value=""
+                  id="query"
+                  class="form-control form-control-lg"
+                  maxlength="50"
+                  placeholder="Фрагмент названия"
+                  autocomplete="off" />
+              </div>
+            </div>
+            <div class="form-group row">
+              <div class="col-sm-12 small">Найдено:&nbsp;<b class="result-count-placeholder">пока не искали</b></div>
+            </div>
+
+            <input type="hidden" name="offset" value="" id="offset" />
+
+            <div class="form-group row">
+              <div class="col-sm-2 col-form-label">
+                <a href="/list/genres/sort_name" target="_blank"> Жанры </a>
+
+                <div class="d-none d-sm-block property">
+                  <span class="include small">Включая</span>
+                  <span class="exclude small">Исключая</span>
+                </div>
+              </div>
+
+              <div class="col-sm-10">
+                <li class="property">
+                  <input type="hidden" class="hide" name="el_2155" value="" id="el_2155" />
+                  <label class=""><span class="js-link" onclick="rm_h.search.clickOption(this, 'el_2155')" title="боевик">боевик</span></label>
+                </li>
+
+                <li class="property">
+                  <input type="hidden" class="hide" name="el_2143" value="" id="el_2143" />
+                  <label class=""
+                    ><span class="js-link" onclick="rm_h.search.clickOption(this, 'el_2143')" title="боевые искусства">боевые искусства</span></label
+                  >
+                </li>
+
+                <li class="property">
+                  <input type="hidden" class="hide" name="el_2142" value="" id="el_2142" />
+                  <label class=""><span class="js-link" onclick="rm_h.search.clickOption(this, 'el_2142')" title="гарем">гарем</span></label>
+                </li>
+
+                <li class="property">
+                  <input type="hidden" class="hide" name="el_2156" value="" id="el_2156" />
+                  <label class=""
+                    ><span class="js-link" onclick="rm_h.search.clickOption(this, 'el_2156')" title="гендерная интрига">гендерная интрига</span></label
+                  >
+                </li>
+
+                <li class="property">
+                  <input type="hidden" class="hide" name="el_2152" value="" id="el_2152" />
+                  <label class=""><span class="js-link" onclick="rm_h.search.clickOption(this, 'el_2152')" title="детектив">детектив</span></label>
+                </li>
+
+                <li class="property">
+                  <input type="hidden" class="hide" name="el_2158" value="" id="el_2158" />
+                  <label class=""><span class="js-link" onclick="rm_h.search.clickOption(this, 'el_2158')" title="дзёсей">дзёсей</span></label>
+                </li>
+
+                <li class="property">
+                  <input type="hidden" class="hide" name="el_2118" value="" id="el_2118" />
+                  <label class=""><span class="js-link" onclick="rm_h.search.clickOption(this, 'el_2118')" title="драма">драма</span></label>
+                </li>
+
+                <li class="property">
+                  <input type="hidden" class="hide" name="el_2119" value="" id="el_2119" />
+                  <label class=""><span class="js-link" onclick="rm_h.search.clickOption(this, 'el_2119')" title="история">история</span></label>
+                </li>
+
+                <li class="property">
+                  <input type="hidden" class="hide" name="el_9450" value="" id="el_9450" />
+                  <label class=""><span class="js-link" onclick="rm_h.search.clickOption(this, 'el_9450')" title="исэкай">исэкай</span></label>
+                </li>
+
+                <li class="property">
+                  <input type="hidden" class="hide" name="el_8032" value="" id="el_8032" />
+                  <label class=""><span class="js-link" onclick="rm_h.search.clickOption(this, 'el_8032')" title="киберпанк">киберпанк</span></label>
+                </li>
+
+                <li class="property">
+                  <input type="hidden" class="hide" name="el_2137" value="" id="el_2137" />
+                  <label class=""><span class="js-link" onclick="rm_h.search.clickOption(this, 'el_2137')" title="кодомо">кодомо</span></label>
+                </li>
+
+                <li class="property">
+                  <input type="hidden" class="hide" name="el_2136" value="" id="el_2136" />
+                  <label class=""><span class="js-link" onclick="rm_h.search.clickOption(this, 'el_2136')" title="комедия">комедия</span></label>
+                </li>
+
+                <li class="property">
+                  <input type="hidden" class="hide" name="el_9514" value="" id="el_9514" />
+                  <label class=""><span class="js-link" onclick="rm_h.search.clickOption(this, 'el_9514')" title="музыка">музыка</span></label>
+                </li>
+
+                <li class="property">
+                  <input type="hidden" class="hide" name="el_2133" value="" id="el_2133" />
+                  <label class=""
+                    ><span class="js-link" onclick="rm_h.search.clickOption(this, 'el_2133')" title="научная фантастика">научная фантастика</span></label
+                  >
+                </li>
+
+                <li class="property">
+                  <input type="hidden" class="hide" name="el_9524" value="" id="el_9524" />
+                  <label class=""><span class="js-link" onclick="rm_h.search.clickOption(this, 'el_9524')" title="пародия">пародия</span></label>
+                </li>
+
+                <li class="property">
+                  <input type="hidden" class="hide" name="el_2135" value="" id="el_2135" />
+                  <label class=""><span class="js-link" onclick="rm_h.search.clickOption(this, 'el_2135')" title="повседневность">повседневность</span></label>
+                </li>
+
+                <li class="property">
+                  <input type="hidden" class="hide" name="el_2151" value="" id="el_2151" />
+                  <label class=""
+                    ><span class="js-link" onclick="rm_h.search.clickOption(this, 'el_2151')" title="постапокалиптика">постапокалиптика</span></label
+                  >
+                </li>
+
+                <li class="property">
+                  <input type="hidden" class="hide" name="el_2130" value="" id="el_2130" />
+                  <label class=""><span class="js-link" onclick="rm_h.search.clickOption(this, 'el_2130')" title="приключения">приключения</span></label>
+                </li>
+
+                <li class="property">
+                  <input type="hidden" class="hide" name="el_2144" value="" id="el_2144" />
+                  <label class=""><span class="js-link" onclick="rm_h.search.clickOption(this, 'el_2144')" title="психология">психология</span></label>
+                </li>
+
+                <li class="property">
+                  <input type="hidden" class="hide" name="el_2121" value="" id="el_2121" />
+                  <label class=""><span class="js-link" onclick="rm_h.search.clickOption(this, 'el_2121')" title="романтика">романтика</span></label>
+                </li>
+
+                <li class="property">
+                  <input type="hidden" class="hide" name="el_2159" value="" id="el_2159" />
+                  <label class=""
+                    ><span class="js-link" onclick="rm_h.search.clickOption(this, 'el_2159')" title="сверхъестественное">сверхъестественное</span></label
+                  >
+                </li>
+
+                <li class="property">
+                  <input type="hidden" class="hide" name="el_2122" value="" id="el_2122" />
+                  <label class=""><span class="js-link" onclick="rm_h.search.clickOption(this, 'el_2122')" title="сёдзё">сёдзё</span></label>
+                </li>
+
+                <li class="property">
+                  <input type="hidden" class="hide" name="el_2134" value="" id="el_2134" />
+                  <label class=""><span class="js-link" onclick="rm_h.search.clickOption(this, 'el_2134')" title="сёнэн">сёнэн</span></label>
+                </li>
+
+                <li class="property">
+                  <input type="hidden" class="hide" name="el_2129" value="" id="el_2129" />
+                  <label class=""><span class="js-link" onclick="rm_h.search.clickOption(this, 'el_2129')" title="спорт">спорт</span></label>
+                </li>
+
+                <li class="property">
+                  <input type="hidden" class="hide" name="el_2138" value="" id="el_2138" />
+                  <label class=""><span class="js-link" onclick="rm_h.search.clickOption(this, 'el_2138')" title="сэйнэн">сэйнэн</span></label>
+                </li>
+
+                <li class="property">
+                  <input type="hidden" class="hide" name="el_2153" value="" id="el_2153" />
+                  <label class=""><span class="js-link" onclick="rm_h.search.clickOption(this, 'el_2153')" title="трагедия">трагедия</span></label>
+                </li>
+
+                <li class="property">
+                  <input type="hidden" class="hide" name="el_2150" value="" id="el_2150" />
+                  <label class=""><span class="js-link" onclick="rm_h.search.clickOption(this, 'el_2150')" title="триллер">триллер</span></label>
+                </li>
+
+                <li class="property">
+                  <input type="hidden" class="hide" name="el_2125" value="" id="el_2125" />
+                  <label class=""><span class="js-link" onclick="rm_h.search.clickOption(this, 'el_2125')" title="ужасы">ужасы</span></label>
+                </li>
+
+                <li class="property">
+                  <input type="hidden" class="hide" name="el_2131" value="" id="el_2131" />
+                  <label class=""><span class="js-link" onclick="rm_h.search.clickOption(this, 'el_2131')" title="фэнтези">фэнтези</span></label>
+                </li>
+
+                <li class="property">
+                  <input type="hidden" class="hide" name="el_2127" value="" id="el_2127" />
+                  <label class=""><span class="js-link" onclick="rm_h.search.clickOption(this, 'el_2127')" title="школа">школа</span></label>
+                </li>
+
+                <li class="property">
+                  <input type="hidden" class="hide" name="el_2149" value="" id="el_2149" />
+                  <label class=""><span class="js-link" onclick="rm_h.search.clickOption(this, 'el_2149')" title="этти">этти</span></label>
+                </li>
+              </div>
+            </div>
+
+            <div class="form-group row">
+              <div class="col-sm-2 col-form-label">
+                <a href="/list/categorys/sort_name" target="_blank"> Категории </a>
+              </div>
+
+              <div class="col-sm-10">
+                <li class="property">
+                  <input type="hidden" class="hide" name="el_9577" value="" id="el_9577" />
+                  <label class=""><span class="js-link" onclick="rm_h.search.clickOption(this, 'el_9577')" title="OEL-манга">OEL-манга</span></label>
+                </li>
+
+                <li class="property">
+                  <input type="hidden" class="hide" name="el_5685" value="" id="el_5685" />
+                  <label class=""><span class="js-link" onclick="rm_h.search.clickOption(this, 'el_5685')" title="Арт">Арт</span></label>
+                </li>
+
+                <li class="property">
+                  <input type="hidden" class="hide" name="el_2141" value="" id="el_2141" />
+                  <label class=""><span class="js-link" onclick="rm_h.search.clickOption(this, 'el_2141')" title="Додзинси">Додзинси</span></label>
+                </li>
+
+                <li class="property">
+                  <input type="hidden" class="hide" name="el_2161" value="" id="el_2161" />
+                  <label class=""><span class="js-link" onclick="rm_h.search.clickOption(this, 'el_2161')" title="Ёнкома">Ёнкома</span></label>
+                </li>
+
+                <li class="property">
+                  <input type="hidden" class="hide" name="el_3515" value="" id="el_3515" />
+                  <label class=""><span class="js-link" onclick="rm_h.search.clickOption(this, 'el_3515')" title="Комикс">Комикс</span></label>
+                </li>
+
+                <li class="property">
+                  <input type="hidden" class="hide" name="el_9451" value="" id="el_9451" />
+                  <label class=""><span class="js-link" onclick="rm_h.search.clickOption(this, 'el_9451')" title="Манга">Манга</span></label>
+                </li>
+
+                <li class="property">
+                  <input type="hidden" class="hide" name="el_3001" value="" id="el_3001" />
+                  <label class=""><span class="js-link" onclick="rm_h.search.clickOption(this, 'el_3001')" title="Манхва">Манхва</span></label>
+                </li>
+
+                <li class="property">
+                  <input type="hidden" class="hide" name="el_3002" value="" id="el_3002" />
+                  <label class=""><span class="js-link" onclick="rm_h.search.clickOption(this, 'el_3002')" title="Маньхуа">Маньхуа</span></label>
+                </li>
+              </div>
+            </div>
+
+            <div class="form-group row">
+              <div class="col-sm-2 col-form-label">
+                <a href="/list/limitations/sort_name" target="_blank"> Возрастная рекомендация </a>
+              </div>
+
+              <div class="col-sm-10">
+                <li class="property">
+                  <input type="hidden" class="hide" name="el_6180" value="" id="el_6180" />
+                  <label class=""><span class="js-link" onclick="rm_h.search.clickOption(this, 'el_6180')" title="G">G</span></label>
+                </li>
+
+                <li class="property">
+                  <input type="hidden" class="hide" name="el_9848" value="" id="el_9848" />
+                  <label class=""><span class="js-link" onclick="rm_h.search.clickOption(this, 'el_9848')" title="NC-17">NC-17</span></label>
+                </li>
+
+                <li class="property">
+                  <input type="hidden" class="hide" name="el_6179" value="" id="el_6179" />
+                  <label class=""><span class="js-link" onclick="rm_h.search.clickOption(this, 'el_6179')" title="PG">PG</span></label>
+                </li>
+
+                <li class="property">
+                  <input type="hidden" class="hide" name="el_6181" value="" id="el_6181" />
+                  <label class=""><span class="js-link" onclick="rm_h.search.clickOption(this, 'el_6181')" title="PG-13">PG-13</span></label>
+                </li>
+
+                <li class="property">
+                  <input type="hidden" class="hide" name="el_9847" value="" id="el_9847" />
+                  <label class=""><span class="js-link" onclick="rm_h.search.clickOption(this, 'el_9847')" title="R">R</span></label>
+                </li>
+              </div>
+            </div>
+
+            <div class="form-group row">
+              <div class="col-sm-2 col-form-label">
+                <a href="/list/anothers/sort_name" target="_blank"> Прочее </a>
+              </div>
+
+              <div class="col-sm-10">
+                <li class="property">
+                  <input type="hidden" class="hide" name="el_7290" value="" id="el_7290" />
+                  <label class=""><span class="js-link" onclick="rm_h.search.clickOption(this, 'el_7290')" title="В цвете">В цвете</span></label>
+                </li>
+
+                <li class="property">
+                  <input type="hidden" class="hide" name="el_2160" value="" id="el_2160" />
+                  <label class=""><span class="js-link" onclick="rm_h.search.clickOption(this, 'el_2160')" title="Веб">Веб</span></label>
+                </li>
+
+                <li class="property">
+                  <input type="hidden" class="hide" name="el_9795" value="" id="el_9795" />
+                  <label class=""><span class="js-link" onclick="rm_h.search.clickOption(this, 'el_9795')" title="На экранах">На экранах</span></label>
+                </li>
+
+                <li class="property">
+                  <input type="hidden" class="hide" name="el_2157" value="" id="el_2157" />
+                  <label class=""><span class="js-link" onclick="rm_h.search.clickOption(this, 'el_2157')" title="Сборник">Сборник</span></label>
+                </li>
+              </div>
+            </div>
+
+            <div class="form-group row">
+              <div class="col-sm-2 col-form-label">
+                <a href="/list/gournals/sort_name" target="_blank"> Журналы </a>
+              </div>
+
+              <div class="col-sm-10">
+                <select
+                  name="many-el_30"
+                  class="select-30 form-control selectize-suggest"
+                  placeholder="Начните писать..."
+                  multiple='"multiple"'
+                  style="width: px"></select>
+
+                <script type="text/javascript">
+                  $(function () {
+                    rm_h.searchable.addAjaxSelectize('.select-30', {
+                      ajaxUrl: '/search/elementsByType?useLink=&type=30&sort=',
+
+                      maxItems: 5,
+                      mode: 'multi',
+
+                      onChange: function (value) {},
+                    });
+                  });
+                </script>
+              </div>
+            </div>
+
+            <div class="form-group row">
+              <div class="col-sm-2 col-form-label">
+                <a href="/list/tags/sort_name" target="_blank"> Теги </a>
+              </div>
+
+              <div class="col-sm-10">
+                <select
+                  name="many-el_40"
+                  class="select-40 form-control selectize-suggest"
+                  placeholder="Начните писать..."
+                  multiple='"multiple"'
+                  style="width: px"></select>
+
+                <script type="text/javascript">
+                  $(function () {
+                    rm_h.searchable.addAjaxSelectize('.select-40', {
+                      ajaxUrl: '/search/elementsByType?useLink=&type=40&sort=',
+
+                      maxItems: 5,
+                      mode: 'multi',
+
+                      onChange: function (value) {},
+                    });
+                  });
+                </script>
+              </div>
+            </div>
+
+            <div class="form-group row">
+              <div class="col-sm-2 col-form-label">Фильтры</div>
+              <div class="col-sm-10">
+                <li class="property">
+                  <input type="hidden" class="hide" name="s_high_rate" value="" id="s_high_rate" />
+                  <label class=""
+                    ><span class="js-link" onclick="rm_h.search.clickOption(this, 's_high_rate')" title="Высокий рейтинг">Высокий рейтинг</span></label
+                  >
+                </li>
+
+                <li class="property">
+                  <input type="hidden" class="hide" name="s_single" value="" id="s_single" />
+                  <label class=""><span class="js-link" onclick="rm_h.search.clickOption(this, 's_single')" title="Сингл">Сингл</span></label>
+                </li>
+
+                <li class="property">
+                  <input type="hidden" class="hide" name="s_mature" value="" id="s_mature" />
+                  <label class=""><span class="js-link" onclick="rm_h.search.clickOption(this, 's_mature')" title="Для взрослых">Для взрослых</span></label>
+                </li>
+
+                <li class="property">
+                  <input type="hidden" class="hide" name="s_translated" value="" id="s_translated" />
+                  <label class=""><span class="js-link" onclick="rm_h.search.clickOption(this, 's_translated')" title="Переведено">Переведено</span></label>
+                </li>
+
+                <li class="property">
+                  <input type="hidden" class="hide" name="s_abandoned_popular" value="" id="s_abandoned_popular" />
+                  <label class=""
+                    ><span class="js-link" onclick="rm_h.search.clickOption(this, 's_abandoned_popular')" title="Заброшен перевод"
+                      >Заброшен перевод</span
+                    ></label
+                  >
+                </li>
+
+                <li class="property">
+                  <input type="hidden" class="hide" name="s_many_chapters" value="" id="s_many_chapters" />
+                  <label class=""><span class="js-link" onclick="rm_h.search.clickOption(this, 's_many_chapters')" title="Длинная">Длинная</span></label>
+                </li>
+
+                <li class="property">
+                  <input type="hidden" class="hide" name="s_wait_upload" value="" id="s_wait_upload" />
+                  <label class=""
+                    ><span class="js-link" onclick="rm_h.search.clickOption(this, 's_wait_upload')" title="Ожидает загрузки">Ожидает загрузки</span></label
+                  >
+                </li>
+
+                <li class="property">
+                  <input type="hidden" class="hide" name="s_not_pessimized" value="" id="s_not_pessimized" />
+                  <label class=""
+                    ><span class="js-link" onclick="rm_h.search.clickOption(this, 's_not_pessimized')" title="Белые жанры">Белые жанры</span></label
+                  >
+                </li>
+              </div>
+            </div>
+
+            <div class="form-group row">
+              <div class="col-sm-2 col-form-label">Статус выхода</div>
+              <div class="col-sm-10">
+                <li class="property">
+                  <input type="hidden" class="hide" name="prod_PLANNED" value="" id="prod_PLANNED" />
+                  <label class=""><span class="js-link" onclick="rm_h.search.clickOption(this, 'prod_PLANNED')" title="Запланирован">Запланирован</span></label>
+                </li>
+
+                <li class="property">
+                  <input type="hidden" class="hide" name="prod_PROGRESS" value="" id="prod_PROGRESS" />
+                  <label class=""
+                    ><span class="js-link" onclick="rm_h.search.clickOption(this, 'prod_PROGRESS')" title="Продолжается">Продолжается</span></label
+                  >
+                </li>
+
+                <li class="property">
+                  <input type="hidden" class="hide" name="prod_POSTPONED" value="" id="prod_POSTPONED" />
+                  <label class=""
+                    ><span class="js-link" onclick="rm_h.search.clickOption(this, 'prod_POSTPONED')" title="Приостановлен">Приостановлен</span></label
+                  >
+                </li>
+
+                <li class="property">
+                  <input type="hidden" class="hide" name="prod_CANCELED" value="" id="prod_CANCELED" />
+                  <label class=""><span class="js-link" onclick="rm_h.search.clickOption(this, 'prod_CANCELED')" title="Отменён">Отменён</span></label>
+                </li>
+
+                <li class="property">
+                  <input type="hidden" class="hide" name="prod_FINISHED" value="" id="prod_FINISHED" />
+                  <label class=""><span class="js-link" onclick="rm_h.search.clickOption(this, 'prod_FINISHED')" title="Завершён">Завершён</span></label>
+                </li>
+
+                <li class="property">
+                  <input type="hidden" class="hide" name="prod_NON_FINISHED" value="" id="prod_NON_FINISHED" />
+                  <label class=""
+                    ><span class="js-link" onclick="rm_h.search.clickOption(this, 'prod_NON_FINISHED')" title="Не окончен">Не окончен</span></label
+                  >
+                </li>
+              </div>
+            </div>
+            <div class="form-group row">
+              <div class="col-sm-2 col-form-label">Статус перевода</div>
+              <div class="col-sm-10">
+                <li class="property">
+                  <input type="hidden" class="hide" name="trans_NONE" value="" id="trans_NONE" />
+                  <label class=""><span class="js-link" onclick="rm_h.search.clickOption(this, 'trans_NONE')" title="Отсутствует">Отсутствует</span></label>
+                </li>
+
+                <li class="property">
+                  <input type="hidden" class="hide" name="trans_STARTED" value="" id="trans_STARTED" />
+                  <label class=""><span class="js-link" onclick="rm_h.search.clickOption(this, 'trans_STARTED')" title="Начат">Начат</span></label>
+                </li>
+
+                <li class="property">
+                  <input type="hidden" class="hide" name="trans_PROGRESS" value="" id="trans_PROGRESS" />
+                  <label class=""
+                    ><span class="js-link" onclick="rm_h.search.clickOption(this, 'trans_PROGRESS')" title="Продолжается">Продолжается</span></label
+                  >
+                </li>
+
+                <li class="property">
+                  <input type="hidden" class="hide" name="trans_POSTPONED" value="" id="trans_POSTPONED" />
+                  <label class=""
+                    ><span class="js-link" onclick="rm_h.search.clickOption(this, 'trans_POSTPONED')" title="Приостановлен">Приостановлен</span></label
+                  >
+                </li>
+
+                <li class="property">
+                  <input type="hidden" class="hide" name="trans_FINISHED" value="" id="trans_FINISHED" />
+                  <label class=""><span class="js-link" onclick="rm_h.search.clickOption(this, 'trans_FINISHED')" title="Завершён">Завершён</span></label>
+                </li>
+
+                <li class="property">
+                  <input type="hidden" class="hide" name="trans_NO_NEED" value="" id="trans_NO_NEED" />
+                  <label class=""
+                    ><span class="js-link" onclick="rm_h.search.clickOption(this, 'trans_NO_NEED')" title="Нет необходимости">Нет необходимости</span></label
+                  >
+                </li>
+              </div>
+            </div>
+
+            <div class="form-group row">
+              <div class="col-sm-2 col-form-label">Год выпуска</div>
+
+              <div class="col-sm-10 year-selector">
+                <b title="1950 и ранее" data-toggle="tooltip">1950</b>
+                <input
+                  class="range-input"
+                  name="years"
+                  type="hidden"
+                  value=""
+                  data-slider-min="1950"
+                  data-slider-max="2026"
+                  data-slider-value="[1950,2026]"
+                  data-slider-tooltip-position="bottom"
+                  data-slider-tooltip-split="true"
+                  data-slider-handle="custom" />
+                <b>2026</b>
+
+                <script>
+                  $(function () {
+                    $('input[name=years]').slider({});
+                  });
+                </script>
+              </div>
+            </div>
+
+            <div class="form-group row">
+              <div class="col-sm-2 col-form-label">Сортировка</div>
+
+              <div class="col-sm-6">
+                <select class="form-control form-control-sm" name="sortType" id="sortType">
+                  <option value="RATING">по популярности</option>
+                  <option value="NAME">по алфавиту</option>
+                  <option value="YEAR">по году написания</option>
+                  <option value="POPULARITY">популярность сейчас</option>
+                  <option value="USER_RATING">по рейтингу</option>
+                  <option value="DATE_CREATE">новинки</option>
+                  <option value="DATE_UPDATE">по дате обновления</option>
+                </select>
+              </div>
+            </div>
+
+            <br />
+
+            <div class="form-group row">
+              <div class="col-sm-4 offset-sm-2">
+                <input type="submit" class="btn btn-success btn-lg btn-block" value="Искать" />
+              </div>
+              <div class="col-sm-6 d-flex align-items-center">Найдено:&nbsp;<b class="result-count-placeholder">пока не искали</b></div>
+            </div>
+          </form>
+
+          <script>
+            rm_h.search.reprocess();
+            rm_h.advanced_search.init();
+          </script>
+
+          <div id="advanced-results">
+            <script>
+              $('.result-count-placeholder').html('пока не искали');
+              initBaseElementsOnPage('#advanced-results');
+              $('.search-form input[name="offset"]').val(0); // reset after loading page. used only in pager
+            </script>
+          </div>
+        </div>
+
+        <div class="rightContent">
+          <a href="/internal/edit/index" class="icon-link">
+            <i class="fa fa-plus fa-lg text-warning fa-fw"></i>
+            Добавить мангу
+          </a>
+          <br />
+          <h5>Теперь поиск ищет по всем нашим сайтам!</h5>
+
+          <br />
+          <br />
+
+          <div class="rightBlock">
+            <h5><a href="/list" class="strong">Популярная сейчас манга</a></h5>
+            <ol class="mangaList">
+              <li>
+                <a href="/nekromant____ia_katastrofa_" target="" title="боевик, приключения, сверхъестественное, сёнэн, фэнтези" class="manga-link"
+                  >Некромант — «я катастрофа»</a
+                ><span
+                  class="screenshot manga-link"
+                  rel="https://staticrmm.rmr.rocks/uploads/pics/02/34/422_crp_1.jpg"
+                  data-title="боевик, приключения, сверхъестественное, сёнэн, фэнтези"
+                  data-h="450"
+                  data-w="325"></span>
+              </li>
+              <li>
+                <a href="/luchshii_injener_v_mire" target="" title="боевик, драма, исэкай, комедия, приключения, сёнэн, фэнтези" class="manga-link"
+                  >Лучший инженер в мире</a
+                ><span
+                  class="screenshot manga-link"
+                  rel="https://staticrmm.rmr.rocks/uploads/pics/02/38/800.jpg"
+                  data-title="боевик, драма, исэкай, комедия, приключения, сёнэн, фэнтези"
+                  data-h="450"
+                  data-w="325"></span>
+              </li>
+              <li>
+                <a
+                  href="/skazaniia_o_demonah_i_bogah__A5664"
+                  target=""
+                  title="боевик, боевые искусства, гарем, комедия, приключения, романтика, сёнэн, фэнтези"
+                  class="manga-link"
+                  >Сказания о демонах и богах</a
+                ><span
+                  class="screenshot manga-link"
+                  rel="https://staticrmm.rmr.rocks/uploads/pics/01/28/772_crp_1.jpg"
+                  data-title="боевик, боевые искусства, гарем, комедия, приключения, романтика, сёнэн, фэнтези"
+                  data-h="450"
+                  data-w="325"></span>
+              </li>
+              <li>
+                <a href="/vozvrachenie_geroia_urovnia_katastrofy__A5e4e" target="" title="боевик, драма, приключения, сёнэн, фэнтези" class="manga-link"
+                  >Возвращение героя уровня катастрофы</a
+                ><span
+                  class="screenshot manga-link"
+                  rel="https://staticrmm.rmr.rocks/uploads/pics/02/43/001.jpg"
+                  data-title="боевик, драма, приключения, сёнэн, фэнтези"
+                  data-h="450"
+                  data-w="325"></span>
+              </li>
+              <li>
+                <a href="/vseveduchii_chitatel__A5664" target="" title="постапокалиптика, приключения, сёнэн, фэнтези" class="manga-link">Всеведущий читатель</a
+                ><span
+                  class="screenshot manga-link"
+                  rel="https://staticrmm.rmr.rocks/uploads/pics/01/85/485.jpg"
+                  data-title="постапокалиптика, приключения, сёнэн, фэнтези"
+                  data-h="450"
+                  data-w="325"></span>
+              </li>
+              <li>
+                <a
+                  href="/chto_budet__esli_ia_sorvu_masku_horoshego_parnia"
+                  target=""
+                  title="гендерная интрига, исэкай, комедия, романтика, сёдзё, фэнтези"
+                  class="manga-link"
+                  >Что будет, если я сорву маску хорошего парня</a
+                ><span
+                  class="screenshot manga-link"
+                  rel="https://staticrmm.rmr.rocks/uploads/pics/01/85/343.jpg"
+                  data-title="гендерная интрига, исэкай, комедия, романтика, сёдзё, фэнтези"
+                  data-h="450"
+                  data-w="325"></span>
+              </li>
+              <li>
+                <a
+                  href="/pervorodnyi_greh_takopi"
+                  target=""
+                  title="Taizan5: драма, психология, сверхъестественное, сёнэн, трагедия, триллер, ужасы, школа"
+                  class="manga-link manga-mtr"
+                  >Первородный грех Такопи</a
+                ><span
+                  class="screenshot manga-link manga-mtr"
+                  rel="https://staticrmm.rmr.rocks/uploads/pics/02/57/957.jpg"
+                  data-title="Taizan5: драма, психология, сверхъестественное, сёнэн, трагедия, триллер, ужасы, школа"
+                  data-h="450"
+                  data-w="325"></span>
+              </li>
+              <li>
+                <a href="/ia_stal_grafskim_ubliudkom__A35c96" target="" title="боевик, драма, исэкай, комедия, приключения, сёнэн, фэнтези" class="manga-link"
+                  >Я стал графским ублюдком</a
+                ><span
+                  class="screenshot manga-link"
+                  rel="https://staticrmm.rmr.rocks/uploads/pics/01/53/909.jpg"
+                  data-title="боевик, драма, исэкай, комедия, приключения, сёнэн, фэнтези"
+                  data-h="450"
+                  data-w="325"></span>
+              </li>
+              <li>
+                <a
+                  href="/mest_jeleznokrovnogo_psa_mechenosca"
+                  target=""
+                  title="боевик, боевые искусства, исэкай, приключения, сверхъестественное, фэнтези"
+                  class="manga-link manga-mtr"
+                  >Месть железнокровного Пса-меченосца</a
+                ><span
+                  class="screenshot manga-link manga-mtr"
+                  rel="https://staticrmm.rmr.rocks/uploads/pics/01/97/661.jpg"
+                  data-title="боевик, боевые искусства, исэкай, приключения, сверхъестественное, фэнтези"
+                  data-h="450"
+                  data-w="325"></span>
+              </li>
+              <li>
+                <a href="/nachalo_posle_konca__A5e4e" target="" title="исэкай, приключения, фэнтези" class="manga-link">Начало после конца</a
+                ><span
+                  class="screenshot manga-link"
+                  rel="https://staticrmm.rmr.rocks/uploads/pics/01/49/514.jpg"
+                  data-title="исэкай, приключения, фэнтези"
+                  data-h="450"
+                  data-w="325"></span>
+              </li>
+              <li>
+                <a
+                  href="/klinok__rassekaiuchii_demonov__A5327"
+                  target=""
+                  title="Готогэ Коёхару: боевик, боевые искусства, драма, приключения, сверхъестественное, сёнэн, трагедия, фэнтези"
+                  class="manga-link"
+                  >Клинок, рассекающий демонов</a
+                ><span
+                  class="screenshot manga-link"
+                  rel="https://staticrmm.rmr.rocks/uploads/pics/00/80/809.jpg"
+                  data-title="Готогэ Коёхару: боевик, боевые искусства, драма, приключения, сверхъестественное, сёнэн, трагедия, фэнтези"
+                  data-h="450"
+                  data-w="325"></span>
+              </li>
+              <li>
+                <a href="/malyshka_180__A5274" target="" title="гендерная интрига, драма, комедия, повседневность, романтика, школа" class="manga-link"
+                  >Малышка 180</a
+                ><span
+                  class="screenshot manga-link"
+                  rel="https://staticrmm.rmr.rocks/uploads/pics/02/12/565.jpg"
+                  data-title="гендерная интрига, драма, комедия, повседневность, романтика, школа"
+                  data-h="450"
+                  data-w="325"></span>
+              </li>
+              <li>
+                <a href="/ia_edinstvennyi_novichok_maksimalnogo_urovnia__A35c96" target="" title="боевик, приключения, сёнэн, фэнтези" class="manga-link"
+                  >Я единственный новичок максимального уровня</a
+                ><span
+                  class="screenshot manga-link"
+                  rel="https://staticrmm.rmr.rocks/uploads/pics/02/43/488.jpg"
+                  data-title="боевик, приключения, сёнэн, фэнтези"
+                  data-h="450"
+                  data-w="325"></span>
+              </li>
+              <li>
+                <a href="/volk_i_naidenysh__A5327" target="" title="Ма Вэй, Студия Мосспака: боевик, комедия, повседневность, сёнэн" class="manga-link"
+                  >Волк и найденыш</a
+                ><span
+                  class="screenshot manga-link"
+                  rel="https://staticrmm.rmr.rocks/uploads/pics/01/52/033.jpg"
+                  data-title="Ма Вэй, Студия Мосспака: боевик, комедия, повседневность, сёнэн"
+                  data-h="450"
+                  data-w="325"></span>
+              </li>
+              <li>
+                <a href="/podniatie_urovnia_v_odinochku__A5ea4" target="" title="драма, приключения, сёнэн, фэнтези" class="manga-link"
+                  >Поднятие уровня в одиночку</a
+                ><span
+                  class="screenshot manga-link"
+                  rel="https://staticrmm.rmr.rocks/uploads/pics/01/76/482.jpg"
+                  data-title="драма, приключения, сёнэн, фэнтези"
+                  data-h="450"
+                  data-w="325"></span>
+              </li>
+            </ol>
+          </div>
+        </div>
+
+        <div class="clearfix"><!----></div>
+      </div>
+      <style type="text/css">
+        #mangaBox {
+          overflow: visible;
+        }
+      </style>
+
+      <script>
+        rm_h.rightContentMenu = new RmRightContentMenu();
+        rm_h.menuManager.add(rm_h.rightContentMenu);
+      </script>
+
+      <div class="side-menu" id="side-menu-btn" onclick="rm_h.rightContentMenu.open()">
+        <span>Меню</span>
+        <i class="fa fa-angle-left"></i>
+      </div>
+    </div>
+
+    <div class="page-footer">
+      <div class="footer-shadow"></div>
+      <div class="container">
+        <div class="footer-links">
+          <a href="/internal/user/settings"> <i class="fa fa-low-vision text-danger"></i> взрослое </a> |
+          <a href="/page/user_agreement">Пользовательское соглашение</a> |
+          <a href="/internal/feedback/index?type=5" class="bootstrap-modalbox">Жалоба на контент</a> |
+          <a href="/page/copyright_holders">Для правообладателей</a> |
+
+          <span class="d-none d-sm-inline-block"><a href="/page/advertising">Реклама на сайте</a> |</span>
+          <a href="/about">О нас</a>
+
+          |
+          <a
+            href="https://3.grouple.co/forum/posts/list/0/23305.page"
+            data-toggle="tooltip"
+            title="ЧаВо - ответы на частые вопросы"
+            target="_blank"
+            rel="noopener">
+            <span class="fa fa-question-circle text-info"></span> ЧаВо
+          </a>
+        </div>
+
+        <div class="footer-claims d-none d-sm-inline-block">о нарушениях сообщайте <strong>claim&#64;input.one</strong></div>
+      </div>
+    </div>
+
+    <script>
+      decodeBaBlocks(
+        'PHNjcmlwdD4NCndpbmRvdy55YUNvbnRleHRDYi5wdXNoKCgpID0+IHsNCiAgICBZYS5Db250ZXh0LkFkdk1hbmFnZXIucmVuZGVyKHsNCiAgICAgICAgImJsb2NrSWQiOiAiUi1BLTE5NjEyODktMyIsDQogICAgICAgICJyZW5kZXJUbyI6ICJ5YW5kZXhfcnRiX1ItQS0xOTYxMjg5LTMiDQogICAgfSkNCn0pDQo8L3NjcmlwdD4=',
+        'PHNjcmlwdD4NCndpbmRvdy55YUNvbnRleHRDYi5wdXNoKCgpID0+IHsNCiAgICBZYS5Db250ZXh0LkFkdk1hbmFnZXIucmVuZGVyKHsNCiAgICAgICAgImJsb2NrSWQiOiAiUi1BLTE5NjEyODktMSIsDQogICAgICAgICJyZW5kZXJUbyI6ICJ5YW5kZXhfcnRiX1ItQS0xOTYxMjg5LTEiDQogICAgfSkNCn0pDQo8L3NjcmlwdD4=',
+        '',
+        ''
+      );
+    </script>
+
+    <script type="text/javascript" src="https://resrmm.rmr.rocks/static/application_deferred-7a91c612fde4f67ff8fc40eb6837c2c8.js"></script>
+
+    <script type="text/javascript">
+      rm_sso_h.doRequest('https://3.grouple.co', 13);
+    </script>
+    <!-- Yandex.Metrika counter -->
+    <script type="text/javascript">
+      (function (m, e, t, r, i, k, a) {
+        m[i] =
+          m[i] ||
+          function () {
+            (m[i].a = m[i].a || []).push(arguments);
+          };
+        m[i].l = 1 * new Date();
+        for (var j = 0; j < document.scripts.length; j++) {
+          if (document.scripts[j].src === r) {
+            return;
+          }
+        }
+        (k = e.createElement(t)), (a = e.getElementsByTagName(t)[0]), (k.async = 1), (k.src = r), a.parentNode.insertBefore(k, a);
+      })(window, document, 'script', 'https://mc.webvisor.org/metrika/tag_ww.js', 'ym');
+      ym(98561756, 'init', { clickmap: true, trackLinks: true, accurateTrackBounce: true });
+    </script>
+    <noscript
+      ><div><img src="https://mc.yandex.ru/watch/98561756" style="position: absolute; left: -9999px" alt="" /></div
+    ></noscript>
+    <!-- /Yandex.Metrika counter -->
+  </body>
+</html>
