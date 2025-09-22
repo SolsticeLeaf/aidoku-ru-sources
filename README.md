@@ -1,13 +1,10 @@
 # Aidoku Sources
-This repository hosts unofficial, community-made sources that are installable through the Aidoku application.
-
-> [!WARNING]
-> This repo is no longer actively maintained. A continuation of this project with updated sources (for Aidoku 0.7+) can be found [here](https://github.com/Aidoku-Community/sources).
+This repository hosts unofficial russian community-made sources that are installable through the Aidoku application.
 
 ## Usage
-On a device with Aidoku installed, you can open [this link](https://aidoku.app/add-source-list/?url=https://raw.githubusercontent.com/Skittyblock/aidoku-community-sources/gh-pages/) to add the source list directly to the app.
+On a device with Aidoku installed, you can open [this link](https://aidoku.app/add-source-list/?url=https://raw.githubusercontent.com/SolsticeLeaf/aidoku-ru-sources/gh-pages/) to add the source list directly to the app.
 
-Otherwise, navigate to the settings tab, and under the source lists page add `https://raw.githubusercontent.com/Skittyblock/aidoku-community-sources/gh-pages/`.
+Otherwise, navigate to the settings tab, and under the source lists page add `https://raw.githubusercontent.com/SolsticeLeaf/aidoku-ru-sources/gh-pages/`.
 
 If a source is not working, or you want to request a source that isn't available in this source list, feel free to [create a new issue](https://github.com/Skittyblock/aidoku-community-sources/issues).
 
