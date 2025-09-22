@@ -13,12 +13,6 @@ use crate::{
 	wrappers::WNode,
 };
 
-pub fn get_base_url() -> String {
-    defaults_get("baseUrl")
-        .map(|value| value.as_string().unwrap_or_default())
-        .unwrap_or_default()
-}
-
 pub fn get_html(url: &str) -> Result<WNode> {
 	Request::new(url, HttpMethod::Get)
   	.header("Referer", "https://www.google.com/")
