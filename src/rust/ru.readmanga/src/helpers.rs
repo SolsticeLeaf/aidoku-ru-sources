@@ -14,7 +14,7 @@ use crate::{
 };
 
 pub fn get_base_url() -> String {
-	defaults_get("baseUrl").as_string().map(|x| x.read()).unwrap_or_default()
+	defaults_get("baseUrl").as_string().unwrap_or_default()
 }
 
 pub fn get_html(url: &str) -> Result<WNode> {
