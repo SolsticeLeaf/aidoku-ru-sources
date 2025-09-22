@@ -4,7 +4,7 @@ use aidoku::{
 	error::{AidokuError, AidokuErrorKind, Result},
 	helpers::{substring::Substring, uri::encode_uri},
 	prelude::*,
-	std::{defaults::defaults_get, String, StringRef, Vec},
+	std::{String, StringRef, Vec},
 	Chapter, DeepLink, Filter, FilterType, Manga, MangaContentRating, MangaStatus, MangaViewer,
 	Page,
 };
@@ -393,10 +393,7 @@ pub fn get_page_list(html: &WNode) -> Result<Vec<Page>> {
 		// composing URL
 		.map(|(part0, part1, part2)| {
 			if part1.is_empty() && part2.starts_with("/static/") {
-				let base = defaults_get("baseURL")?
-						.as_string()
-						.map(|v| v.read().trim_end_matches('/').to_string());
-				format!("{BASE_URL}{part2}")
+				format!("{}{}", helpers::get_base_url(), part2)
 			} else if part1.starts_with("/manga/") {
 				format!("{part0}{part2}")
 			} else {

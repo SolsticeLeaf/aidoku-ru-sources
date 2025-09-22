@@ -4,12 +4,17 @@ use aidoku::{
 	std::net::{HttpMethod, Request},
 	Manga, MangaPageResult,
 };
+use aidoku::std::defaults::defaults_get;
 use alloc::{string::String, vec::Vec};
 
 use crate::{
 	constants::{BASE_URL, SEARCH_OFFSET_STEP},
 	wrappers::WNode,
 };
+
+pub fn get_base_url() -> String {
+	defaults_get("baseUrl")?.as_string()?.read()
+}
 
 pub fn get_html(url: &str) -> Result<WNode> {
 	Request::new(url, HttpMethod::Get)
