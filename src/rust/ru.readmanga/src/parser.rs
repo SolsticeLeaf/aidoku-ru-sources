@@ -479,11 +479,7 @@ pub fn get_filter_url(filters: &[Filter], sorting: &Sorting, page: i32) -> Resul
         b_is_q.cmp(&a_is_q) // place q= before others
     });
 
-    Ok(format!(
-        "{}/search/advancedResults?{}",
-        helpers::get_base_url(),
-        params.join("&")
-    ))
+    Ok(format!("{}{}", helpers::get_search_base_url(), params.join("&")))
 }
 
 pub fn parse_incoming_url(url: &str) -> Result<DeepLink> {

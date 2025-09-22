@@ -1,14 +1,14 @@
 use aidoku::{
     error::{AidokuError, AidokuErrorKind, NodeError, Result},
     prelude::*,
-    std::{defaults::defaults_get, net::{HttpMethod, Request}, String},
+    std::{defaults::defaults_get, net::{HttpMethod, Request}},
     Manga, MangaPageResult,
 };
-use alloc::vec::Vec;
+use alloc::{string::String, vec::Vec};
 
 use crate::{
-    constants::{BASE_URL, SEARCH_OFFSET_STEP},
-    wrappers::WNode,
+	constants::{BASE_URL, SEARCH_OFFSET_STEP},
+	wrappers::WNode,
 };
 
 pub fn get_base_url() -> String {
@@ -17,6 +17,10 @@ pub fn get_base_url() -> String {
         .map(|s| s.read())
         .filter(|s| !s.is_empty())
         .unwrap_or_else(|| BASE_URL.to_string())
+}
+
+pub fn get_search_base_url() -> String {
+    format!("{}/search/advancedResults?", get_base_url())
 }
 
 pub fn get_html(url: &str) -> Result<WNode> {
