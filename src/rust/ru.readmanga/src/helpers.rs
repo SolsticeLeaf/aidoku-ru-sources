@@ -2,9 +2,10 @@ use aidoku::{
 	error::{AidokuError, AidokuErrorKind, NodeError, Result},
 	prelude::*,
 	std::net::{HttpMethod, Request},
-	std::defaults::defaults_get,
 	Manga, MangaPageResult,
 };
+use aidoku::helpers::uri::QueryParameters;
+use aidoku::std::defaults::defaults_get;
 use alloc::{string::String, vec::Vec};
 
 use crate::{
