@@ -7,15 +7,5 @@
     "url": "https://senkuro.me",
     "nsfw": 1
   },
-  "listings": [
-    {
-      "name": "Rating"
-    },
-    {
-      "name": "Popular"
-    },
-    {
-      "name": "Updated Recently"
-    }
-  ]
+  "listings": []
 }
