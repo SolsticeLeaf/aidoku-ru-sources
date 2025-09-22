@@ -186,34 +186,32 @@ pub fn parse_manga(html: &WNode, id: String) -> Result<Manga> {
 
 	let categories = chain!(
 		once(category_opt).flatten(),
-		// Genres are represented as anchors with class `elem_genre` inside subject meta
-		main_info_node
-			.select("a.elem_genre")
-			.into_iter()
-			.map(WNode::text)
+		extract_info_iter("genre", "element")
 	)
 	.collect();
 
-	// Determine publication status from badges like "выпуск завершён"
-	let badge_texts: Vec<String> = main_info_node
-		.select("span.badge")
-		.iter()
-		.map(|n| n.text().to_lowercase())
-		.collect();
-	let status = if badge_texts.iter().any(|t| t.contains("выпуск заверш")) {
-		MangaStatus::Completed
-	} else if badge_texts.iter().any(|t| t.contains("выпуск")) {
-		MangaStatus::Ongoing
-	} else if badge_texts.iter().any(|t| t.contains("переводится")) {
-		// fallback on translation process if publication badge is absent
-		MangaStatus::Ongoing
-	} else if badge_texts
-		.iter()
-		.any(|t| t.contains("перевод приостановлен"))
-	{
-		MangaStatus::Hiatus
-	} else {
-		MangaStatus::Unknown
+	let status_str_opt = main_info_node
+		.select("p")
+		.into_iter()
+		.filter(|pn| pn.attr("class").is_none())
+		.flat_map(|pn| pn.select("span"))
+		.find(|sn| {
+			if let Some(class_attr) = sn.attr("class") {
+				return class_attr
+					.split_whitespace()
+					.any(|cl| cl.starts_with("text-"));
+			}
+			false
+		})
+		.map(|status_node| status_node.text());
+	let status = match status_str_opt {
+		Some(status_str) => match status_str.to_lowercase().as_str() {
+			"переведено" => MangaStatus::Completed,
+			"переводится" => MangaStatus::Ongoing,
+			"перевод приостановлен" => MangaStatus::Hiatus,
+			_ => MangaStatus::Unknown,
+		},
+		None => MangaStatus::Unknown,
 	};
 
 	Ok(Manga {
