@@ -1,18 +1,15 @@
 [
   {
     "type": "group",
-    "title": "Настройки",
+    "title": "Веб домен",
     "items": [
       {
         "type": "text",
         "key": "baseUrl",
-        "title": "Веб домен",
         "placeholder": "https://3.readmanga.ru",
-        "keyboardType": 3,
-        "returnKeyType": 9,
-        "autocorrectionDisabled": true,
         "default": "https://3.readmanga.ru",
-        "refreshes": ["listings", "content"]
+        "autocorrectionType": 0,
+        "spellCheckingType": 0
       }
     ]
   }
