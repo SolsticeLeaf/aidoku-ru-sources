@@ -393,7 +393,7 @@ pub fn get_page_list(html: &WNode) -> Result<Vec<Page>> {
 		// composing URL
 		.map(|(part0, part1, part2)| {
 			if part1.is_empty() && part2.starts_with("/static/") {
-				format!("{}{}", helpers::get_base_url(), part2)
+				format!("{BASE_URL}{part2}")
 			} else if part1.starts_with("/manga/") {
 				format!("{part0}{part2}")
 			} else {
