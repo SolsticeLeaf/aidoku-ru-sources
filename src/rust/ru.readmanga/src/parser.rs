@@ -61,11 +61,23 @@ pub fn parse_search_results(html: &WNode) -> Result<Vec<Manga>> {
 
 			let url = helpers::get_manga_url(&id);
 
-			let categories = div_html_popover_holder_node
-				.select("span.badge-light")
-				.iter()
-				.map(WNode::text)
-				.collect();
+			// Categories in search tiles appear both visibly in tile-info as links
+			// and hidden inside <noindex> popover as spans (including .hide items).
+			let categories = chain!(
+				div_tile_info_node
+					.select("a.badge")
+					.iter()
+					.map(WNode::text),
+				div_html_popover_holder_node
+					.select("span.elem_genre")
+					.iter()
+					.map(WNode::text),
+				div_html_popover_holder_node
+					.select("span.elem_tag")
+					.iter()
+					.map(WNode::text)
+			)
+			.collect();
 
 			// Parse status from tags in the tile: consider both translation and release completion badges
 			let status = {
