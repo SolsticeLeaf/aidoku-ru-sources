@@ -64,14 +64,23 @@ pub fn parse_search_results(html: &WNode) -> Result<Vec<Manga>> {
 
 			let url = helpers::get_manga_url(&id);
 
+			// Parse genres/tags from a.elem_genre (based on provided HTML snippet)
 			let categories: Vec<String> = div_html_popover_holder_node
-				.select("elem_genre")
+				.select("a.elem_genre")
 				.iter()
-				.filter_map(|a_node| a_node.text().trim().to_string().into())
+				.filter_map(|a_node| {
+					let text = a_node.text().trim().to_string();
+					if !text.is_empty() {
+						Some(text)
+					} else {
+						None
+					}
+				})
 				.collect();
 
+			// Parse status from span.badge in div.tile-info (adapted for search results; if not present, fallback to Unknown)
 			let status_str_opt = div_tile_info_node
-				.select("badge")
+				.select("span.badge")
 				.find_map(|sn| {
 					let text = sn.text().trim().to_string();
 					if !text.is_empty() {
@@ -201,29 +210,44 @@ pub fn parse_manga(html: &WNode, id: String) -> Result<Manga> {
 		None => MangaViewer::default(),
 	};
 
-	let categories: Vec<String> = main_info_node
-				.select("elem_genre")
-				.iter()
-				.filter_map(|a_node| a_node.text().trim().to_string().into())
-				.collect();
+	// Parse genres/tags from a.elem_genre in p.elementList (based on provided HTML snippet)
+	let genres: Vec<String> = main_info_node
+		.select("p.elementList a.elem_genre")
+		.iter()
+		.filter_map(|a_node| {
+			let text = a_node.text().trim().to_string();
+			if !text.is_empty() {
+				Some(text)
+			} else {
+				None
+			}
+		})
+		.collect();
 
-			let status_str_opt = main_info_node
-				.select("badge")
-				.find_map(|sn| {
-					let text = sn.text().trim().to_string();
-					if !text.is_empty() {
-						Some(text)
-					} else {
-						None
-					}
-				});
-			let status = match status_str_opt.as_deref() {
-				Some("переведено") | Some("выпуск завершён") => MangaStatus::Completed,
-				Some("переводится") => MangaStatus::Ongoing,
-				Some("перевод приостановлен") => MangaStatus::Hiatus,
-				Some("заброшен") => MangaStatus::Cancelled,
-				_ => MangaStatus::Unknown,
-			};
+	let categories: Vec<String> = chain!(
+		once(category_opt).flatten(),
+		genres.into_iter()
+	)
+	.filter(|s| !s.trim().is_empty())
+	.collect();
+
+	let status_str_opt = main_info_node
+		.select("p span.badge")
+		.find_map(|sn| {
+			let text = sn.text().trim().to_string();
+			if !text.is_empty() {
+				Some(text)
+			} else {
+				None
+			}
+		});
+	let status = match status_str_opt.as_deref() {
+		Some("переведено") | Some("выпуск завершён") => MangaStatus::Completed,
+		Some("переводится") => MangaStatus::Ongoing,
+		Some("перевод приостановлен") => MangaStatus::Hiatus,
+		Some("заброшен") => MangaStatus::Cancelled,
+		_ => MangaStatus::Unknown,
+	};
 
 	Ok(Manga {
 		id,
