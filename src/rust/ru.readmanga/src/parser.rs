@@ -117,8 +117,17 @@ pub fn parse_manga(html: &WNode, id: String) -> Result<Manga> {
 
 	let picture_fororama_node = main_attributes_node.select("div.picture-fotorama").pop();
 	let cover = picture_fororama_node
-		.and_then(|pfn| pfn.select("img").pop())
-		.and_then(|img_node| img_node.attr("src"))
+		.and_then(|pfn| {
+			let mut imgs = pfn.select("img");
+			imgs.into_iter().next()
+		})
+		.and_then(|img_node| {
+			img_node
+				.attr("data-full")
+				.or_else(|| img_node.attr("data-thumb"))
+				.or_else(|| img_node.attr("src"))
+		})
+		.map(|url| if url.contains("://") { url } else { format!("https:{url}") })
 		.unwrap_or_default();
 
 	let names_node = main_node.select("h1.names").pop().ok_or(parsing_error)?;
