@@ -4,7 +4,7 @@ use aidoku::{
 	error::{AidokuError, AidokuErrorKind, Result},
 	helpers::{substring::Substring, uri::encode_uri},
 	prelude::*,
-	std::{String, StringRef, Vec},
+	std::{defaults::defaults_get, String, StringRef, Vec},
 	Chapter, DeepLink, Filter, FilterType, Manga, MangaContentRating, MangaStatus, MangaViewer,
 	Page,
 };
