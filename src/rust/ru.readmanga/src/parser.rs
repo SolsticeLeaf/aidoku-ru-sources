@@ -379,7 +379,13 @@ pub fn get_page_list(html: &WNode) -> Result<Vec<Page>> {
 		.map(|(start, end)| &script_text[start..end + 2])
 		.ok_or(parsing_error)?;
 
-	let urls: Vec<_> = chapters_list_str
+    let base = defaults_get("baseUrl")
+        .and_then(|v| v.as_string().ok())
+        .map(|s| s.read())
+        .filter(|s| !s.is_empty())
+        .unwrap_or_else(|| "https://3.readmanga.ru".to_string());
+
+    let urls: Vec<_> = chapters_list_str
 		.match_indices("['")
 		// extracting parts from ['https://t1.rmr.rocks/', '', "auto/68/88/46/0098.png_res.jpg", 959, 1400] into tuples
 		.zip(chapters_list_str.match_indices("\","))
@@ -392,13 +398,9 @@ pub fn get_page_list(html: &WNode) -> Result<Vec<Page>> {
 				.collect_tuple()
 		})
 		// composing URL
-		.map(|(part0, part1, part2)| {
-			if part1.is_empty() && part2.starts_with("/static/") {
-				let base = defaults_get("baseUrl")
-					.and_then(|v| v.as_string().ok())
-					.map(|s| s.read())
-					.unwrap_or_default();
-				format!("{base}{part2}")
+        .map(|(part0, part1, part2)| {
+            if part1.is_empty() && part2.starts_with("/static/") {
+                format!("{base}{part2}")
 			} else if part1.starts_with("/manga/") {
 				format!("{part0}{part2}")
 			} else {
@@ -484,11 +486,7 @@ pub fn get_filter_url(filters: &[Filter], sorting: &Sorting, page: i32) -> Resul
         b_is_q.cmp(&a_is_q) // place q= before others
     });
 
-	let base = defaults_get("baseUrl")
-		.and_then(|v| v.as_string().ok())
-		.map(|s| s.read())
-		.unwrap_or_default();
-	Ok(format!("{}/search/advancedResults?{}", base, params.join("&")))
+    Ok(format!("{}/search/advancedResults?{}", base, params.join("&")))
 }
 
 pub fn parse_incoming_url(url: &str) -> Result<DeepLink> {

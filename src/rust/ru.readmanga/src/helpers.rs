@@ -5,6 +5,14 @@ use aidoku::{
 	Manga, MangaPageResult,
 };
 use aidoku::std::defaults::defaults_get;
+pub fn base_url() -> String {
+    defaults_get("baseUrl")
+        .and_then(|v| v.as_string().ok())
+        .map(|s| s.read())
+        .filter(|s| !s.is_empty())
+        .unwrap_or_else(|| "https://3.readmanga.ru".to_string())
+}
+
 
 use alloc::{string::String, vec::Vec};
 
@@ -21,11 +29,7 @@ pub fn get_html(url: &str) -> Result<WNode> {
 }
 
 pub fn get_manga_url(id: &str) -> String {
-	let base = defaults_get("baseUrl")
-		.and_then(|v| v.as_string().ok())
-		.map(|s| s.read())
-		.unwrap_or_default();
-	format!("{}/{}", base, id)
+    format!("{}/{}", base_url(), id)
 }
 
 pub fn create_manga_page_result(mangas: Vec<Manga>) -> MangaPageResult {
@@ -37,12 +41,8 @@ pub fn create_manga_page_result(mangas: Vec<Manga>) -> MangaPageResult {
 }
 
 pub fn get_chapter_url(manga_id: &str, chapter_id: &str) -> String {
-	// mtr is 18+ skip
-	let base = defaults_get("baseUrl")
-		.and_then(|v| v.as_string().ok())
-		.map(|s| s.read())
-		.unwrap_or_default();
-	format!("{base}/{manga_id}/{chapter_id}?mtr=true")
+    // mtr is 18+ skip
+    format!("{}/{manga_id}/{chapter_id}?mtr=true", base_url())
 }
 
 pub fn create_parsing_error() -> AidokuError {
