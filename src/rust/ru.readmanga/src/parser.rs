@@ -396,7 +396,7 @@ pub fn get_page_list(html: &WNode) -> Result<Vec<Page>> {
 				let base = defaults_get("baseURL")?
 						.as_string()
 						.map(|v| v.read().trim_end_matches('/').to_string());
-				format!("{base}{part2}")
+				format!("{BASE_URL}{part2}")
 			} else if part1.starts_with("/manga/") {
 				format!("{part0}{part2}")
 			} else {
