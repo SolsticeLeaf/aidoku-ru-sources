@@ -21,8 +21,11 @@ pub fn get_html(url: &str) -> Result<WNode> {
 }
 
 pub fn get_manga_url(id: &str) -> String {
-	let baseUrl = defaults_get("baseUrl").as_string();
-	format!("{}/{}", baseUrl, id)
+	let base = defaults_get("baseUrl")
+		.and_then(|v| v.as_string().ok())
+		.map(|s| s.read())
+		.unwrap_or_default();
+	format!("{}/{}", base, id)
 }
 
 pub fn create_manga_page_result(mangas: Vec<Manga>) -> MangaPageResult {
@@ -35,8 +38,11 @@ pub fn create_manga_page_result(mangas: Vec<Manga>) -> MangaPageResult {
 
 pub fn get_chapter_url(manga_id: &str, chapter_id: &str) -> String {
 	// mtr is 18+ skip
-	let baseUrl = defaults_get("baseUrl").as_string();
-	format!("{baseUrl}/{manga_id}/{chapter_id}?mtr=true")
+	let base = defaults_get("baseUrl")
+		.and_then(|v| v.as_string().ok())
+		.map(|s| s.read())
+		.unwrap_or_default();
+	format!("{base}/{manga_id}/{chapter_id}?mtr=true")
 }
 
 pub fn create_parsing_error() -> AidokuError {

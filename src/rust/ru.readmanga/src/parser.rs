@@ -9,7 +9,6 @@ use aidoku::{
 	Page,
 };
 use aidoku::std::defaults::defaults_get;
-use const_format::formatcp;
 
 extern crate alloc;
 use alloc::{boxed::Box, string::ToString};
@@ -395,8 +394,11 @@ pub fn get_page_list(html: &WNode) -> Result<Vec<Page>> {
 		// composing URL
 		.map(|(part0, part1, part2)| {
 			if part1.is_empty() && part2.starts_with("/static/") {
-				let baseUrl = defaults_get("baseUrl").as_string();
-				format!("{baseUrl}{part2}")
+				let base = defaults_get("baseUrl")
+					.and_then(|v| v.as_string().ok())
+					.map(|s| s.read())
+					.unwrap_or_default();
+				format!("{base}{part2}")
 			} else if part1.starts_with("/manga/") {
 				format!("{part0}{part2}")
 			} else {
@@ -482,8 +484,11 @@ pub fn get_filter_url(filters: &[Filter], sorting: &Sorting, page: i32) -> Resul
         b_is_q.cmp(&a_is_q) // place q= before others
     });
 
-		let baseUrl = defaults_get("baseUrl").as_string();
-    Ok(format!("{}{}", formatcp!("{}/{}", baseUrl, "search/advancedResults?"), params.join("&")))
+	let base = defaults_get("baseUrl")
+		.and_then(|v| v.as_string().ok())
+		.map(|s| s.read())
+		.unwrap_or_default();
+	Ok(format!("{}/search/advancedResults?{}", base, params.join("&")))
 }
 
 pub fn parse_incoming_url(url: &str) -> Result<DeepLink> {
