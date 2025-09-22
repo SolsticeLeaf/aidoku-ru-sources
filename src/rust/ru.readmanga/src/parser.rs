@@ -8,6 +8,7 @@ use aidoku::{
 	Chapter, DeepLink, Filter, FilterType, Manga, MangaContentRating, MangaStatus, MangaViewer,
 	Page,
 };
+use aidoku::std::defaults::defaults_get;
 
 extern crate alloc;
 use alloc::{boxed::Box, string::ToString};
@@ -393,6 +394,10 @@ pub fn get_page_list(html: &WNode) -> Result<Vec<Page>> {
 		// composing URL
 		.map(|(part0, part1, part2)| {
 			if part1.is_empty() && part2.starts_with("/static/") {
+				let base = match defaults_get("baseUrl") {
+        		Some(value) => value.as_string().unwrap_or_default(),
+        		None => String::from("https://3.readmanga.ru"),
+    		}
 				format!("{BASE_URL}{part2}")
 			} else if part1.starts_with("/manga/") {
 				format!("{part0}{part2}")
