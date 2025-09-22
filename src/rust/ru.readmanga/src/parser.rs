@@ -8,7 +8,6 @@ use aidoku::{
 	Chapter, DeepLink, Filter, FilterType, Manga, MangaContentRating, MangaStatus, MangaViewer,
 	Page,
 };
-use aidoku::std::defaults::defaults_get;
 
 extern crate alloc;
 use alloc::{boxed::Box, string::ToString};
@@ -62,7 +61,6 @@ pub fn parse_search_results(html: &WNode) -> Result<Vec<Manga>> {
 
 			let url = helpers::get_manga_url(&id);
 
-			// Categories from visible tile and hidden popover (<noindex>)
 			let mut categories: Vec<String> = Vec::new();
 			categories.extend(
 				div_tile_info_node
@@ -83,7 +81,6 @@ pub fn parse_search_results(html: &WNode) -> Result<Vec<Manga>> {
 					.map(WNode::text),
 			);
 
-			// Parse status from tags in the tile: consider both translation and release completion badges
 			let status = {
 				let has_completed_badge = !node.select("span.mangaTranslationCompleted").is_empty()
 					|| !node.select("span.mangaCompleted").is_empty();
@@ -207,7 +204,6 @@ pub fn parse_manga(html: &WNode, id: String) -> Result<Manga> {
 		None => MangaViewer::default(),
 	};
 
-	// Categories include type (category), genres and tags. Collect a simple list.
 	let mut categories: Vec<String> = Vec::new();
 	if let Some(category) = category_opt {
 		categories.push(category);
@@ -239,7 +235,6 @@ pub fn parse_manga(html: &WNode, id: String) -> Result<Manga> {
 			.map(WNode::text),
 	);
 
-	// Parse status from badges on the manga page
 	let badge_texts: Vec<String> = main_info_node
 		.select("p span.badge")
 		.iter()
@@ -289,7 +284,6 @@ pub fn parse_chapters(html: &WNode, manga_id: &str) -> Result<Vec<Chapter>> {
 		.filter_map(|chapter_elem| {
 			let link_elem = chapter_elem.select("a.chapter-link").pop()?;
 
-			// this: `chapter_elem.select("td.d-none")` doesn't work here, I don't know why
 			let date_elems: Vec<_> = {
 				let chapter_repr = chapter_elem.to_str();
 
@@ -381,7 +375,6 @@ pub fn get_page_list(html: &WNode) -> Result<Vec<Page>> {
 
 	let urls: Vec<_> = chapters_list_str
 		.match_indices("['")
-		// extracting parts from ['https://t1.rmr.rocks/', '', "auto/68/88/46/0098.png_res.jpg", 959, 1400] into tuples
 		.zip(chapters_list_str.match_indices("\","))
 		.filter_map(|((l, _), (r, _))| {
 			use itertools::Itertools;
@@ -391,13 +384,8 @@ pub fn get_page_list(html: &WNode) -> Result<Vec<Page>> {
 				.map(ToString::to_string)
 				.collect_tuple()
 		})
-		// composing URL
 		.map(|(part0, part1, part2)| {
 			if part1.is_empty() && part2.starts_with("/static/") {
-				let base = match defaults_get("baseUrl") {
-        		Some(value) => value.as_string().unwrap_or_default(),
-        		None => String::from("https://3.readmanga.ru"),
-    		}
 				format!("{BASE_URL}{part2}")
 			} else if part1.starts_with("/manga/") {
 				format!("{part0}{part2}")
@@ -405,7 +393,6 @@ pub fn get_page_list(html: &WNode) -> Result<Vec<Page>> {
 				format!("{part0}{part1}{part2}")
 			}
 		})
-		// fixing URL
 		.map(|url| {
 			if !url.contains("://") {
 				format!("https:{url}")
@@ -443,7 +430,6 @@ pub fn get_filter_url(filters: &[Filter], sorting: &Sorting, page: i32) -> Resul
 
     let mut params: Vec<String> = Vec::new();
 
-    // Base required params
     params.push(format!("offset={}", (page - 1) * SEARCH_OFFSET_STEP));
     params.push(format!("sortType={}", sorting));
 
@@ -477,11 +463,10 @@ pub fn get_filter_url(filters: &[Filter], sorting: &Sorting, page: i32) -> Resul
         }
     }
 
-    // Ensure title (q=) appears first if present (optional ordering nicety)
     params.sort_by(|a, b| {
         let a_is_q = a.starts_with("q=");
         let b_is_q = b.starts_with("q=");
-        b_is_q.cmp(&a_is_q) // place q= before others
+        b_is_q.cmp(&a_is_q)
     });
 
     Ok(format!("{}{}", BASE_SEARCH_URL, params.join("&")))
