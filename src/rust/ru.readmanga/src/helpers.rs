@@ -13,7 +13,16 @@ use crate::{
 };
 
 pub fn get_base_url() -> String {
-	defaults_get("baseUrl")?.as_string()
+	defaults_get("baseUrl")
+        .map_err(|e| AidokuError {
+            reason: AidokuErrorKind::ValueNotFound,
+            message: Some(format!("Failed to get baseUrl: {:?}", e)),
+        })?
+        .as_string()
+        .map_err(|e| AidokuError {
+            reason: AidokuErrorKind::InvalidValueType,
+            message: Some(format!("Failed to convert baseUrl to string: {:?}", e)),
+        })
 }
 
 pub fn get_html(url: &str) -> Result<WNode> {
