@@ -1,33 +1,29 @@
-use aidoku::{prelude::*, Manga, MangaPageResult, MangaStatus};
-use alloc::{
-	string::{String, ToString},
-	vec::Vec,
+use aidoku::{
+	error::{AidokuError, AidokuErrorKind, NodeError, Result},
+	prelude::*,
+	std::net::{HttpMethod, Request},
+	Manga, MangaPageResult, MangaStatus,
+};
+use alloc::{string::String, vec::Vec};
+
+use crate::{
+	constants::{BASE_URL, SEARCH_OFFSET_STEP},
+	wrappers::WNode,
 };
 
-use crate::constants::{MANGA_BASE_URL, MANGA_DIR, SEARCH_OFFSET_STEP, SITE};
+pub fn get_html(url: &str) -> Result<WNode> {
+	Request::new(url, HttpMethod::Get)
+		.header("Referer", "https://www.google.com/")
+		.html()
+		.map(WNode::from_node)
+}
 
 pub fn get_manga_url(id: &str) -> String {
-	format!("{MANGA_BASE_URL}/{id}")
+	format!("{}/{}", BASE_URL, id)
 }
 
-pub fn get_manga_id(url: &str) -> Option<String> {
-	let split: Vec<_> = match url.find("://") {
-		Some(idx) => &url[idx + 3..],
-		None => url,
-	}
-	.split('/')
-	.collect();
-
-	if split.len() < 3 || split[0] != SITE || split[1] != MANGA_DIR {
-		return None;
-	}
-
-	let manga_id = split[2];
-	Some(manga_id.to_string())
-}
-
-pub fn create_manga_page_result(mangas: Vec<Manga>, has_more: Option<bool>) -> MangaPageResult {
-	let has_more = has_more.unwrap_or(mangas.len() == SEARCH_OFFSET_STEP as usize);
+pub fn create_manga_page_result(mangas: Vec<Manga>) -> MangaPageResult {
+	let has_more = mangas.len() == SEARCH_OFFSET_STEP as usize;
 	MangaPageResult {
 		manga: mangas,
 		has_more,
@@ -35,15 +31,22 @@ pub fn create_manga_page_result(mangas: Vec<Manga>, has_more: Option<bool>) -> M
 }
 
 pub fn get_chapter_url(manga_id: &str, chapter_id: &str) -> String {
-	format!("{MANGA_BASE_URL}/{manga_id}/{chapter_id}/?style=list&mature=1")
+	// mtr is 18+ skip, style=list for preloading images
+	format!("{BASE_URL}/{manga_id}/{chapter_id}?style=list&mtr=true")
+}
+
+pub fn create_parsing_error() -> AidokuError {
+	AidokuError {
+		reason: AidokuErrorKind::NodeError(NodeError::ParseError),
+	}
 }
 
 pub fn parse_status(status_str: &str) -> MangaStatus {
-	match status_str.trim() {
-		"Онгоинг" => MangaStatus::Ongoing,
-		"Завершен" => MangaStatus::Completed,
-		"Брошено" => MangaStatus::Cancelled,
-		"Заморожен" => MangaStatus::Hiatus,
+	match status_str.trim().to_lowercase().as_str() {
+		"онгоинг" => MangaStatus::Ongoing,
+		"завершен" => MangaStatus::Completed,
+		"брошен" => MangaStatus::Cancelled,
+		"заморожен" => MangaStatus::Hiatus,
 		_ => MangaStatus::Unknown,
 	}
 }

@@ -200,7 +200,7 @@ pub fn parse_manga(html: &WNode, id: String) -> Result<Manga> {
 			if let Some(class_attr) = sn.attr("class") {
 				return class_attr
 					.split_whitespace()
-					.any(|cl| cl.starts_with("text-"));
+					.any(|cl| cl.starts_with("badge"));
 			}
 			false
 		})
@@ -208,8 +208,8 @@ pub fn parse_manga(html: &WNode, id: String) -> Result<Manga> {
 	let status = match status_str_opt {
 		Some(status_str) => match status_str.to_lowercase().as_str() {
 			"переведено" => MangaStatus::Completed,
-			"продолжается" => MangaStatus::Ongoing,
-			"приостановлен" => MangaStatus::Hiatus,
+			"переводится" => MangaStatus::Ongoing,
+			"перевод приостановлен" => MangaStatus::Hiatus,
 			_ => MangaStatus::Unknown,
 		},
 		None => MangaStatus::Unknown,

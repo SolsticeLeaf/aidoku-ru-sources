@@ -21,31 +21,23 @@ pub struct WNode {
 	repr: String,
 }
 
-pub fn post<T: core::convert::AsRef<str>>(
+pub fn post(
 	url: &str,
 	data: &str,
-	headers: &[(T, T)],
+	headers: &[(&str, &str)],
 ) -> Result<WNode> {
 	headers
 		.iter()
 		.fold(Request::new(url, HttpMethod::Post), |req, (hkey, hval)| {
 			req.header(hkey, hval)
 		})
-		.header("Referer", "https://www.google.com/")
 		.body(data)
 		.html()
 		.map(WNode::from_node)
 }
 
-pub fn get_html(url: &str) -> Result<WNode> {
-	Request::new(url, HttpMethod::Get)
-		.header("Referer", "https://www.google.com/")
-		.html()
-		.map(WNode::from_node)
-}
-
 impl WNode {
-	pub fn _new(repr: String) -> Self {
+	pub fn new(repr: String) -> Self {
 		WNode { repr }
 	}
 
@@ -65,11 +57,9 @@ impl WNode {
 		let mut res = Vec::new();
 		let html = self.to_node();
 		for val in html.select(selector).array() {
-			let node_res = val.as_node();
-			if node_res.is_err() {
-				debug!("failed conversion to Node");
+			if let Ok(node) = val.as_node() {
+				res.push(WNode::from_node(node));
 			}
-			res.push(WNode::from_node(node_res.unwrap()));
 		}
 		res
 	}
@@ -107,14 +97,10 @@ impl WNode {
 	}
 
 	fn to_node(&self) -> Node {
-		let res = Node::new(self.repr.as_bytes());
-		if res.is_err() {
-			debug!("failed to create node from \"{}\"", self.repr);
-		}
-		res.unwrap()
+		Node::new(self.repr.as_bytes()).unwrap_or_else(|_| Node::new(b"").unwrap())
 	}
 
-	pub fn _to_str(&self) -> &str {
+	pub fn to_str(&self) -> &str {
 		&self.repr
 	}
 }
