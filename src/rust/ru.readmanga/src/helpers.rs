@@ -5,6 +5,7 @@ use aidoku::{
 	Manga, MangaPageResult,
 };
 use alloc::{string::String, vec::Vec};
+use aidoku::std::defaults::defaults_get;
 
 use crate::{
 	constants::{BASE_URL, SEARCH_OFFSET_STEP},
