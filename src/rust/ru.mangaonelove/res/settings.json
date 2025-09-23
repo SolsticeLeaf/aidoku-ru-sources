@@ -6,8 +6,8 @@
 			{
 				"type": "text",
 				"key": "baseUrl",
-				"placeholder": "https://3.readmanga.ru",
-				"default": "https://3.readmanga.ru",
+				"placeholder": "https://mangaonelove.website",
+				"default": "https://mangaonelove.website",
 				"autocorrectionType": 0,
 				"spellCheckingType": 0
 			}
