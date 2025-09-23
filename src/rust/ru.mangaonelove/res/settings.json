@@ -22,6 +22,12 @@
 				"key": "showNsfw",
 				"title": "Показывать NSFW",
 				"default": false
+			},
+			{
+				"type": "switch",
+				"key": "showOnlyNsfw",
+				"title": "Только NSFW",
+				"default": false
 			}
 		]
 	}

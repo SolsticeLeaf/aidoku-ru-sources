@@ -10,7 +10,7 @@ use alloc::string::ToString;
 
 use crate::{
 	constants::PAGE_DIR,
-	helpers::{get_base_url, get_manga_id, get_manga_url, parse_status, show_nsfw},
+	helpers::{get_base_url, get_manga_id, get_manga_url, parse_status, show_nsfw, show_only_nsfw},
 	wrappers::{post, WNode},
 };
 
@@ -22,6 +22,20 @@ pub fn parse_lising(html: &WNode, listing: Listing) -> Option<Vec<Manga>> {
 	};
 
 	let sidebar_node = html.select_one(&format!("div.c-sidebar.{sidebar_class}"))?;
+
+	let allow_manga = |rating: &MangaContentRating| -> bool {
+		if show_only_nsfw() {
+			if show_nsfw() {
+				*rating == MangaContentRating::Nsfw
+			} else {
+				*rating != MangaContentRating::Nsfw
+			}
+		} else if show_nsfw() {
+			true
+		} else {
+			*rating != MangaContentRating::Nsfw
+		}
+	};
 
 	let mangas = sidebar_node
 		.select("div.slider__item")
@@ -62,7 +76,7 @@ pub fn parse_lising(html: &WNode, listing: Listing) -> Option<Vec<Manga>> {
 				..Default::default()
 			})
 		})
-		.filter(|m| show_nsfw() || m.nsfw != MangaContentRating::Nsfw)
+		.filter(|m| allow_manga(&m.nsfw))
 		.collect();
 
 	Some(mangas)
@@ -71,6 +85,20 @@ pub fn parse_lising(html: &WNode, listing: Listing) -> Option<Vec<Manga>> {
 pub fn parse_search_results(html: &WNode) -> Option<Vec<Manga>> {
 	let list_node = html
 		.select_one("div.c-page-content div.main-col-inner div.tab-content-wrap div.c-tabs-item")?;
+
+	let allow_manga = |rating: &MangaContentRating| -> bool {
+		if show_only_nsfw() {
+			if show_nsfw() {
+				*rating == MangaContentRating::Nsfw
+			} else {
+				*rating != MangaContentRating::Nsfw
+			}
+		} else if show_nsfw() {
+			true
+		} else {
+			*rating != MangaContentRating::Nsfw
+		}
+	};
 
 	let mangas = list_node
 		.select("div.c-tabs-item__content")
@@ -128,10 +156,10 @@ pub fn parse_search_results(html: &WNode) -> Option<Vec<Manga>> {
 				..Default::default()
 			};
 
-			if !show_nsfw() && manga.nsfw == MangaContentRating::Nsfw {
-				None
-			} else {
+			if allow_manga(&manga.nsfw) {
 				Some(manga)
+			} else {
+				None
 			}
 		})
 		.collect();

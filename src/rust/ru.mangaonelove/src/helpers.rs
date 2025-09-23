@@ -13,6 +13,12 @@ pub fn show_nsfw() -> bool {
 		.unwrap_or_default()
 }
 
+pub fn show_only_nsfw() -> bool {
+	defaults_get("showOnlyNsfw")
+		.and_then(|x| x.as_bool())
+		.unwrap_or_default()
+}
+
 pub fn get_base_url() -> String {
 	defaults_get("baseUrl")
 		.and_then(|x| x.as_string())
