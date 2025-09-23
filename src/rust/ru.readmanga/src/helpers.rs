@@ -6,7 +6,10 @@ use aidoku::{
 	std::net::{HttpMethod, Request},
 	Manga, MangaPageResult,
 };
-use alloc::{string::{String, ToString}, vec::Vec};
+use alloc::{
+	string::{String, ToString},
+	vec::Vec,
+};
 
 pub fn get_base_url() -> String {
 	defaults_get("baseUrl")
