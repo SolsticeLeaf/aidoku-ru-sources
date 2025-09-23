@@ -84,10 +84,15 @@ pub fn parse_search_results(html: &WNode) -> Option<Vec<Manga>> {
 					.map(|n| n.text())
 			};
 
-			let url = title_node.attr("href")?;
+			let title_link_node = title_node.select_one("a")?;
+			let url = title_link_node.attr("href")?;
 			let id = get_manga_id(&url)?;
-			let cover = thumb_node.select_one("img")?.attr("src")?;
-			let title = title_node.text();
+			let img_node = thumb_node.select_one("img")?;
+			let cover = match img_node.attr("data-src").or_else(|| img_node.attr("src")) {
+				Some(c) => c,
+				None => return None,
+			};
+			let title = title_link_node.text();
 			let author = extract_from_content("mg_author").unwrap_or_default();
 			let artist = extract_from_content("mg_artists").unwrap_or_default();
 			let categories: Vec<String> = content_node
