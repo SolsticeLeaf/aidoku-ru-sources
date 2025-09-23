@@ -1,23 +1,26 @@
 name: Lint Rust sources
 on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'src/**'
+      - '.github/workflows/build.yaml'
   pull_request:
     paths:
-    - 'src/rust/**'
+      - 'src/rust/**'
 
 jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-      -
-        uses: actions/checkout@v4
-      -
-        name: Get changed files
+      - uses: actions/checkout@v4
+      - name: Get changed files
         id: files
         uses: Ana06/get-changed-files@v2.2.0
         with:
           format: json
-      -
-        name: Cache rust stuff
+      - name: Cache rust stuff
         uses: actions/cache@v4
         with:
           path: |
@@ -28,18 +31,15 @@ jobs:
             src/rust/**/target
           key: ${{ runner.os }}-cargo3-${{ hashFiles('**/Cargo.lock') }}
           restore-keys: ${{ runner.os }}-cargo3-
-      -
-        uses: actions-rs/toolchain@v1
+      - uses: actions-rs/toolchain@v1
         with:
           toolchain: nightly
           override: true
           components: clippy
           target: wasm32-unknown-unknown
-      -
-        name: Other dependencies
+      - name: Other dependencies
         run: sudo apt-get install -y moreutils
-      -
-        name: Lint sources
+      - name: Lint sources
         id: lint
         run: |
           shopt -s globstar
