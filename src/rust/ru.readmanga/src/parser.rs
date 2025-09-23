@@ -8,7 +8,7 @@ use aidoku::{
 };
 
 extern crate alloc;
-use alloc::{boxed::Box, string::ToString};
+use alloc::string::ToString;
 
 use itertools::chain;
 
