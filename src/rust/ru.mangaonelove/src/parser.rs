@@ -10,7 +10,7 @@ use alloc::string::ToString;
 
 use crate::{
 	constants::PAGE_DIR,
-	helpers::{get_base_url, get_manga_id, get_manga_url, parse_status},
+	helpers::{get_base_url, get_manga_id, get_manga_url, parse_status, show_nsfw},
 	wrappers::{post, WNode},
 };
 
@@ -62,6 +62,7 @@ pub fn parse_lising(html: &WNode, listing: Listing) -> Option<Vec<Manga>> {
 				..Default::default()
 			})
 		})
+		.filter(|m| show_nsfw() || m.nsfw != MangaContentRating::Nsfw)
 		.collect();
 
 	Some(mangas)
@@ -114,7 +115,7 @@ pub fn parse_search_results(html: &WNode) -> Option<Vec<Manga>> {
 				MangaContentRating::Suggestive
 			};
 
-			Some(Manga {
+			let manga = Manga {
 				id,
 				cover,
 				title,
@@ -125,7 +126,13 @@ pub fn parse_search_results(html: &WNode) -> Option<Vec<Manga>> {
 				status,
 				nsfw,
 				..Default::default()
-			})
+			};
+
+			if !show_nsfw() && manga.nsfw == MangaContentRating::Nsfw {
+				None
+			} else {
+				Some(manga)
+			}
 		})
 		.collect();
 
@@ -221,22 +228,27 @@ pub fn parse_manga(html: &WNode, id: String) -> Option<Manga> {
 }
 
 pub fn parse_chapters(html: &WNode, manga_id: &str) -> Option<Vec<Chapter>> {
-	let manga_chapters_holder_node =
-		html.select_one("div.c-page-content div#manga-chapters-holder")?;
-
-	let data_id = manga_chapters_holder_node.attr("data-id")?;
-
-	let real_manga_chapters_holder_node = post(
-		&format!("{}/wp-admin/admin-ajax.php", get_base_url()),
-		&format!("action=manga_get_chapters&manga={data_id}"),
-		&[
-			("X-Requested-With", "XMLHttpRequest"),
-			("Referer", &format!("{}", get_manga_url(manga_id))),
-		],
-	)
-	.ok()?;
-
-	let chapter_nodes = real_manga_chapters_holder_node.select("ul > li.wp-manga-chapter");
+	// Prefer inline chapter list if present (as on example.manga.html),
+	// otherwise fallback to AJAX-loaded chapters
+	let chapter_nodes =
+		match html.select_one("div.page-content-listing.single-page ul.main.version-chap") {
+			Some(list) => list.select("li.wp-manga-chapter"),
+			None => {
+				let manga_chapters_holder_node =
+					html.select_one("div.c-page-content div#manga-chapters-holder")?;
+				let data_id = manga_chapters_holder_node.attr("data-id")?;
+				let real_manga_chapters_holder_node = post(
+					&format!("{}/wp-admin/admin-ajax.php", get_base_url()),
+					&format!("action=manga_get_chapters&manga={data_id}"),
+					&[
+						("X-Requested-With", "XMLHttpRequest"),
+						("Referer", &format!("{}", get_manga_url(manga_id))),
+					],
+				)
+				.ok()?;
+				real_manga_chapters_holder_node.select("ul > li.wp-manga-chapter")
+			}
+		};
 
 	let abs = |l, r| {
 		if l > r {
@@ -295,7 +307,13 @@ pub fn parse_chapters(html: &WNode, manga_id: &str) -> Option<Vec<Chapter>> {
 			let date_updated = {
 				let release_date_node = chapter_node.select_one("span.chapter-release-date")?;
 				let normal_release_date = release_date_node.select_one("i").map(|i_node| {
-					StringRef::from(&i_node.text()).as_date("dd-MM-yyyy", None, None)
+					let txt = i_node.text();
+					let parsed1 = StringRef::from(&txt).as_date("dd.MM.yyyy", None, None);
+					if parsed1 > 0f64 {
+						parsed1
+					} else {
+						StringRef::from(&txt).as_date("dd-MM-yyyy", None, None)
+					}
 				});
 
 				let ago_extractor = || {

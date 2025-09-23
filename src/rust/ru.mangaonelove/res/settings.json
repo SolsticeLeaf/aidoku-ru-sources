@@ -12,5 +12,17 @@
 				"spellCheckingType": 0
 			}
 		]
+	},
+	{
+		"type": "group",
+		"title": "Прочее",
+		"items": [
+			{
+				"type": "switch",
+				"key": "showNsfw",
+				"title": "Показывать NSFW",
+				"default": false
+			}
+		]
 	}
 ]

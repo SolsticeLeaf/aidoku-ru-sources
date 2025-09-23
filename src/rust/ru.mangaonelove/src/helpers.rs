@@ -7,6 +7,12 @@ use alloc::{
 
 use crate::constants::{MANGA_DIR, SEARCH_OFFSET_STEP};
 
+pub fn show_nsfw() -> bool {
+	defaults_get("showNsfw")
+		.and_then(|x| x.as_bool())
+		.unwrap_or_default()
+}
+
 pub fn get_base_url() -> String {
 	defaults_get("baseUrl")
 		.and_then(|x| x.as_string())
