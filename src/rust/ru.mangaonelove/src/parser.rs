@@ -68,13 +68,13 @@ pub fn parse_search_results(html: &WNode) -> Option<Vec<Manga>> {
 		.select_one("div.c-page-content div.main-col-inner div.tab-content-wrap div.c-tabs-item")?;
 
 	let mangas = list_node
-		.select("div.row.c-tabs-item__content")
+		.select("div.c-tabs-item__content")
 		.into_iter()
 		.filter_map(|manga_node| {
 			let thumb_node = manga_node.select_one("div.tab-thumb")?;
 			let summary_node = manga_node.select_one("div.tab-summary")?;
 
-			let title_node = summary_node.select_one("div.post-title a")?;
+			let title_node = summary_node.select_one("div.post-title")?;
 			let content_node = summary_node.select_one("div.post-content")?;
 
 			let extract_from_content = |class_name| {
