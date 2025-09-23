@@ -33,7 +33,15 @@ pub fn get_manga_id(url: &str) -> Option<String> {
 	.split('/')
 	.collect();
 
-	if split.len() < 3 || split[0] != get_base_url() || split[1] != MANGA_DIR {
+	let base_no_scheme: String = {
+		let base = get_base_url();
+		match base.find("://") {
+			Some(idx) => base[idx + 3..].to_string(),
+			None => base,
+		}
+	};
+
+	if split.len() < 3 || split[0] != base_no_scheme.as_str() || split[1] != MANGA_DIR {
 		return None;
 	}
 

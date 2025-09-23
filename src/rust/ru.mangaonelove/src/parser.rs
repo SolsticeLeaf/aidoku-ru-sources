@@ -34,7 +34,11 @@ pub fn parse_lising(html: &WNode, listing: Listing) -> Option<Vec<Manga>> {
 			let url = thumb_link_node.attr("href")?;
 			let id = get_manga_id(&url)?;
 
-			let cover = thumb_link_node.select_one("img")?.attr("src")?;
+			let img_node = thumb_link_node.select_one("img")?;
+			let cover = match img_node.attr("data-src").or_else(|| img_node.attr("src")) {
+				Some(c) => c,
+				None => return None,
+			};
 
 			let title = desc_node.select_one("div.post-title")?.text();
 
@@ -101,9 +105,13 @@ pub fn parse_search_results(html: &WNode) -> Option<Vec<Manga>> {
 				.map(WNode::text)
 				.collect();
 			let status = parse_status(&extract_from_content("mg_status")?);
-			let nsfw = match categories.iter().find(|c| c.contains("18+")) {
-				Some(_) => MangaContentRating::Nsfw,
-				None => MangaContentRating::Suggestive,
+			let nsfw = if categories
+				.iter()
+				.any(|c| c.contains("18+") || c.contains("Взрослая"))
+			{
+				MangaContentRating::Nsfw
+			} else {
+				MangaContentRating::Suggestive
 			};
 
 			Some(Manga {
@@ -166,14 +174,21 @@ pub fn parse_manga(html: &WNode, id: String) -> Option<Manga> {
 
 	let cover = summary_node
 		.select_one("div.summary_image img")?
-		.attr("src")?;
+		.attr("data-src")
+		.or_else(|| {
+			summary_node
+				.select_one("div.summary_image img")?
+				.attr("src")
+		})?;
 	let url = get_manga_url(&id);
 	let title = main_node.select_one("div.post-title > h1")?.text();
 	let author = extract_optional_content("authors").join(", ");
 	let artist = extract_optional_content("artist").join(", ");
 
 	let categories = extract_optional_content("genres");
-	let nsfw = if categories.iter().any(|c| c.contains("18+")) {
+	let nsfw = if categories.iter().any(|c| c.contains("18+"))
+		|| categories.iter().any(|c| c.contains("Взрослая"))
+	{
 		MangaContentRating::Nsfw
 	} else {
 		MangaContentRating::Suggestive
