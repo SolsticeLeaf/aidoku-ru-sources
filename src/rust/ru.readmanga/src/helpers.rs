@@ -6,13 +6,16 @@ use aidoku::{
 	std::net::{HttpMethod, Request},
 	Manga, MangaPageResult,
 };
-use alloc::{string::String, vec::Vec};
-use alloc::{format, string::String};
+use alloc::{string::{String, ToString}, vec::Vec};
 
 pub fn get_base_url() -> String {
 	defaults_get("baseUrl")
 		.and_then(|x| x.as_string())
 		.unwrap_or_default()
+		.to_string()
+		.trim()
+		.trim_end_matches('/')
+		.to_string()
 }
 
 pub fn get_base_search_url() -> String {
