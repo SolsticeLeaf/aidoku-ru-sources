@@ -12,6 +12,12 @@ use crate::{
 	wrappers::WNode,
 };
 
+pub fn get_base_url() -> String {
+	defaults_get("baseUrl")
+		.and_then(|x| x.as_string())
+		.unwrap_or_default();
+}
+
 pub fn get_html(url: &str) -> Result<WNode> {
 	Request::new(url, HttpMethod::Get)
 		.header("Referer", "https://www.google.com/")
@@ -20,10 +26,7 @@ pub fn get_html(url: &str) -> Result<WNode> {
 }
 
 pub fn get_manga_url(id: &str) -> String {
-	let baseUrl = defaults_get("baseUrl")
-		.and_then(|x| x.as_string())
-		.unwrap_or_default();
-	format!("{}/{}", BASE_URL, id)
+	format!("{}/{}", get_base_url(), id)
 }
 
 pub fn create_manga_page_result(mangas: Vec<Manga>) -> MangaPageResult {
