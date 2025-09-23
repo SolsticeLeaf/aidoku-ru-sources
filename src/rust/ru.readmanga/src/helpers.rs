@@ -1,5 +1,6 @@
 use crate::{constants::SEARCH_OFFSET_STEP, wrappers::WNode};
 use aidoku::std::defaults::defaults_get;
+use aidoku::std::String;
 use aidoku::{
 	error::{AidokuError, AidokuErrorKind, NodeError, Result},
 	prelude::*,
@@ -12,6 +13,10 @@ pub fn get_base_url() -> String {
 	defaults_get("baseUrl")
 		.and_then(|x| x.as_string())
 		.unwrap_or_default()
+}
+
+pub fn get_base_search_url() -> String {
+	format!("{}/{}", get_base_url(), "search/advancedResults?")
 }
 
 pub fn get_html(url: &str) -> Result<WNode> {
