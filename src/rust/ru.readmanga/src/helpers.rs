@@ -9,8 +9,9 @@ use aidoku::{
 use alloc::{string::String, vec::Vec};
 
 pub fn get_base_url() -> String {
-	defaults_get("baseUrl")
-		.and_then(|x| x.as_string())
+	defaults_get("baseUrl")?
+		.as_string()
+		.and_then(|x| x.read().trim_end_matches('/').to_string())
 		.unwrap_or_default()
 }
 
