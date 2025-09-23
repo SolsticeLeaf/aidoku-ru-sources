@@ -1,3 +1,4 @@
+use aidoku::std::defaults::defaults_get;
 use aidoku::{
 	error::{AidokuError, AidokuErrorKind, NodeError, Result},
 	prelude::*,
@@ -5,7 +6,6 @@ use aidoku::{
 	Manga, MangaPageResult,
 };
 use alloc::{string::String, vec::Vec};
-use aidoku::std::defaults::defaults_get;
 
 use crate::{
 	constants::{BASE_URL, SEARCH_OFFSET_STEP},
@@ -20,6 +20,9 @@ pub fn get_html(url: &str) -> Result<WNode> {
 }
 
 pub fn get_manga_url(id: &str) -> String {
+	let baseUrl = defaults_get("baseUrl")
+		.and_then(|x| x.as_string())
+		.unwrap_or_default();
 	format!("{}/{}", BASE_URL, id)
 }
 
