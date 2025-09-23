@@ -1,13 +1,14 @@
 [
 	{
 		"type": "group",
-    "title": "Домен сайта",
+		"title": "Домен сайта",
+		"subtitle": "Если сайт переехал - вы всегда можете поменять здесь домен.",
 		"items": [
 			{
 				"type": "text",
 				"key": "testSetting",
 				"placeholder": "https://3.readmanga.ru",
-        "default": "https://3.readmanga.ru"
+				"default": "https://3.readmanga.ru"
 			}
 		]
 	}
