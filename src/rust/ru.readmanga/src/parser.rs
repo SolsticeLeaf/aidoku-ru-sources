@@ -457,7 +457,7 @@ pub fn get_filter_url(filters: &[Filter], sorting: &Sorting, page: i32) -> Resul
 
 	Ok(format!(
 		"{}{}",
-		helpers::get_base_search_url(),
+		format!("{}/{}", helpers::get_base_url(), "search/advancedResults?"),
 		params.join("&")
 	))
 }

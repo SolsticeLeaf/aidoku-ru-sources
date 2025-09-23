@@ -9,18 +9,9 @@ use aidoku::{
 use alloc::{string::String, vec::Vec};
 
 pub fn get_base_url() -> String {
-	aidoku::println!(
-		"baseUrl = {:?}",
-		defaults_get("baseUrl").and_then(|x| x.as_string())
-	);
 	defaults_get("baseUrl")
 		.and_then(|x| x.as_string())
-		.map(|s| s.trim_end_matches('/').to_string())
 		.unwrap_or_default()
-}
-
-pub fn get_base_search_url() -> String {
-	format!("{}/{}", get_base_url(), "search/advancedResults?")
 }
 
 pub fn get_html(url: &str) -> Result<WNode> {
