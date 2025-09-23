@@ -16,7 +16,7 @@ impl Sorting {
 			"Рейтинг" => Self::Rating,
 			"Популярное" => Self::Popular,
 			"Обновлено недавно" => Self::UpdatedRecently,
-			_ => Self::Popular,
+			_ => Self::Rating,
 		}
 	}
 }

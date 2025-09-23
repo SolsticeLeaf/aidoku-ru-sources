@@ -18,7 +18,7 @@ pub fn parse_lising(html: &WNode, listing: Listing) -> Option<Vec<Manga>> {
 	let sidebar_class = match listing.name.as_str() {
 		"Популярное" => "c-top-sidebar",
 		"Новое" => "c-top-second-sidebar",
-		_ => "c-top-sidebar",
+		_ => return None,
 	};
 
 	let sidebar_node = html.select_one(&format!("div.c-sidebar.{sidebar_class}"))?;
@@ -424,7 +424,7 @@ pub fn get_filter_url(filters: &[Filter], page: i32) -> Option<String> {
 	};
 
 	Some(format!(
-		"{}/{PAGE_DIR}/{page}/?post_type=wp-manga&m_orderby=trending{}",
+		"{}/{PAGE_DIR}/{page}/?post_type=wp-manga&m_orderby=latest{}",
 		get_base_url(),
 		filter_addition
 	))
