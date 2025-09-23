@@ -1,6 +1,5 @@
 use crate::{constants::SEARCH_OFFSET_STEP, wrappers::WNode};
 use aidoku::std::defaults::defaults_get;
-use aidoku::std::String;
 use aidoku::{
 	error::{AidokuError, AidokuErrorKind, NodeError, Result},
 	prelude::*,
@@ -8,6 +7,7 @@ use aidoku::{
 	Manga, MangaPageResult,
 };
 use alloc::{string::String, vec::Vec};
+use alloc::{format, string::String};
 
 pub fn get_base_url() -> String {
 	defaults_get("baseUrl")
