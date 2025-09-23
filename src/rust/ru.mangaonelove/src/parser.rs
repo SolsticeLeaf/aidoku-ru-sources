@@ -18,7 +18,7 @@ pub fn parse_lising(html: &WNode, listing: Listing) -> Option<Vec<Manga>> {
 	let sidebar_class = match listing.name.as_str() {
 		"Популярное" => "c-top-sidebar",
 		"Новое" => "c-top-second-sidebar",
-		_ => return None,
+		_ => "c-top-sidebar",
 	};
 
 	let sidebar_node = html.select_one(&format!("div.c-sidebar.{sidebar_class}"))?;
