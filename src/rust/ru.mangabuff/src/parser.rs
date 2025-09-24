@@ -23,17 +23,15 @@ pub fn parse_lising(html: &WNode) -> Option<Vec<Manga>> {
 		.filter_map(|manga_node| {
 			let main_node = manga_node.select_one("a")?;
 
-			let url = main_node.attr("href")?;
-			let img_style = main_node.select_one("div.cards__img")?.attr("style")?;
+			let url = main_node.attr("href")?.to_string();
+			let img_style = main_node
+				.select_one("div.cards__img")?
+				.attr("style")?
+				.to_string();
 			let id = get_manga_id(&url)?;
 			let cover = get_manga_thumb_url(&img_style)?;
-			let title = main_node
-				.select_one("span.rating.cards_rating_green div.cards__name")?
-				.text()
-				.trim()
-				.to_string();
-
-			// TODO: Add parsing categories for filtering
+			let title_node = main_node.select_one("div.cards__name")?;
+			let title = title_node.text().trim().to_string();
 
 			Some(Manga {
 				id,

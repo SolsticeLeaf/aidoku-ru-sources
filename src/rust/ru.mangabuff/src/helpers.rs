@@ -26,13 +26,13 @@ pub fn get_manga_url(id: &str) -> String {
 }
 
 pub fn get_manga_id(url: &str) -> Option<String> {
-	let split: Vec<_> = match url.find("://") {
-		Some(idx) => &url[idx + 3..]
-			.split_once("?")
-			.map_or(&url[idx + 3..], |x| x.0),
-		None => url,
+	let clean_url = url.split_once("?").map_or(url, |x| x.0);
+	let split: Vec<_> = match clean_url.find("://") {
+		Some(idx) => &clean_url[idx + 3..],
+		None => clean_url,
 	}
 	.split('/')
+	.filter(|s| !s.is_empty())
 	.collect();
 
 	let base_no_scheme: String = {
@@ -47,8 +47,8 @@ pub fn get_manga_id(url: &str) -> Option<String> {
 		return None;
 	}
 
-	let manga_id = split[2];
-	Some(manga_id.to_string())
+	let manga_id = split[2].to_string();
+	Some(manga_id)
 }
 
 pub fn get_manga_thumb_url(style: &str) -> Option<String> {
