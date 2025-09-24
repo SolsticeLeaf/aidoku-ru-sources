@@ -21,21 +21,6 @@ pub struct WNode {
 	repr: String,
 }
 
-pub fn post<T: core::convert::AsRef<str>>(
-	url: &str,
-	data: &str,
-	headers: &[(T, T)],
-) -> Result<WNode> {
-	headers
-		.iter()
-		.fold(Request::new(url, HttpMethod::Post), |req, (hkey, hval)| {
-			req.header(hkey, hval)
-		})
-		.body(data)
-		.html()
-		.map(WNode::from_node)
-}
-
 pub fn get_html(url: &str) -> Result<WNode> {
 	Request::new(url, HttpMethod::Get)
 		.html()

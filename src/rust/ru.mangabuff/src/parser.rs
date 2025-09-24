@@ -8,12 +8,11 @@ use aidoku::{
 
 extern crate alloc;
 use alloc::string::ToString;
-use core::cmp::Ordering;
 
 use crate::{
 	constants::PAGE_DIR,
 	helpers::{get_base_url, get_manga_id, get_manga_thumb_url, get_manga_url, parse_status},
-	wrappers::{post, WNode},
+	wrappers::WNode,
 };
 
 pub fn parse_manga_list(html: &WNode) -> Option<Vec<Manga>> {
@@ -64,74 +63,72 @@ pub fn parse_manga_list(html: &WNode) -> Option<Vec<Manga>> {
 
 pub fn parse_manga(html: &WNode, id: String) -> Option<Manga> {
 	let main_node = html.select_one("div.manga")?;
-	let description_node = html.select_one("div.description-summary")?;
-	let summary_node = main_node.select_one("div.tab-summary")?;
-	let summary_content_node = summary_node.select_one("div.summary_content")?;
-	let content_node = summary_content_node.select_one("div.post-content")?;
+	let description_node = main_node.select_one("div.manga__description")?;
 
-	let extract_optional_content = |content_type| {
-		content_node
-			.select_one(&format!("div.{}-content", content_type))
-			.map(|type_node| {
-				type_node
-					.select("a")
-					.iter()
-					.map(WNode::text)
-					.map(|s| s.trim().to_string())
-					.collect::<Vec<_>>()
-			})
-			.unwrap_or_default()
-	};
-
-	let get_row_value_by_name = |parent_node: &WNode, row_name| {
-		parent_node
-			.select("div.post-content_item")
-			.iter()
-			.find(|n| {
-				n.select_one("div.summary-heading")
-					.is_some_and(|heading| heading.text().trim() == row_name)
-			})
-			.and_then(|n| {
-				n.select_one("div.summary-content")
-					.map(|c| c.text().trim().to_string())
-			})
-	};
-
-	let cover = summary_node
-		.select_one("div.summary_image img")?
-		.attr("data-src")
-		.or_else(|| {
-			summary_node
-				.select_one("div.summary_image img")?
-				.attr("src")
-		})?;
-	let url = get_manga_url(&id);
-	let title = main_node
-		.select_one("div.post-title > h1")?
-		.text()
-		.trim()
+	let image_url = main_node
+		.select_one("div.manga__img")?
+		.select_one("img")?
+		.attr("src")?
 		.to_string();
-	let author = extract_optional_content("authors").join(", ");
-	let artist = extract_optional_content("artist").join(", ");
+	let cover = format!("{}{}", get_base_url(), image_url);
+	let url = get_manga_url(&id);
+	let title = main_node.select_one("h1.manga__name")?.text().to_string();
 
-	let categories = extract_optional_content("genres");
-	let status = get_row_value_by_name(&content_node, "Статус")
-		.map(|status_str| parse_status(&status_str))
+	let categories = main_node
+		.select_one("div.tags")
+		.map(|type_node| {
+			type_node
+				.select("a")
+				.iter()
+				.map(WNode::text)
+				.map(|s| s.trim().to_string())
+				.collect::<Vec<_>>()
+		})
+		.unwrap_or_default();
+
+	let status = main_node
+		.select_one("div.manga__middle div.manga__middle-links")
+		.and_then(|links| {
+			links
+				.select("a.manga__middle-link")
+				.iter()
+				.find(|link| {
+					link.attr("href")
+						.is_some_and(|href| href.contains("status_id"))
+				})
+				.map(|link| parse_status(link.text().trim()))
+		})
 		.unwrap_or(MangaStatus::Unknown);
-	let viewer = get_row_value_by_name(&content_node, "Тип")
-		.map(|manga_type| match manga_type.trim() {
-			"Манхва" | "Маньхуа" => MangaViewer::Scroll,
-			_ => MangaViewer::default(),
+
+	let viewer = main_node
+		.select_one("div.manga__middle div.manga__middle-links")
+		.and_then(|links| {
+			links
+				.select("a.manga__middle-link")
+				.iter()
+				.find(|link| {
+					link.attr("href")
+						.is_some_and(|href| href.contains("/types/"))
+				})
+				.map(|link| match link.text().trim() {
+					"Манхва" => MangaViewer::Scroll,
+					"OEL-манга" => MangaViewer::Scroll,
+					"Комикс Западный" => MangaViewer::Ltr,
+					"Маньхуа" => MangaViewer::Scroll,
+					"Манга" => MangaViewer::default(),
+					_ => MangaViewer::default(),
+				})
 		})
 		.unwrap_or(MangaViewer::default());
-	let description = description_node.text().trim().to_string();
+
+	let description = description_node.text().to_string();
 
 	Some(Manga {
 		id,
 		cover,
 		title,
-		author,
-		artist,
+		author: "".to_string(),
+		artist: "".to_string(),
 		description,
 		url,
 		categories,
@@ -142,96 +139,48 @@ pub fn parse_manga(html: &WNode, id: String) -> Option<Manga> {
 }
 
 pub fn parse_chapters(html: &WNode, manga_id: &str) -> Option<Vec<Chapter>> {
-	let chapter_nodes =
-		match html.select_one("div.page-content-listing.single-page ul.main.version-chap") {
-			Some(list) => list.select("li.wp-manga-chapter"),
-			None => {
-				let manga_chapters_holder_node =
-					html.select_one("div.c-page-content div#manga-chapters-holder")?;
-				let data_id = manga_chapters_holder_node.attr("data-id")?;
-				let real_manga_chapters_holder_node = post(
-					&format!("{}/wp-admin/admin-ajax.php", get_base_url()),
-					&format!("action=manga_get_chapters&manga={data_id}"),
-					&[
-						("X-Requested-With", "XMLHttpRequest"),
-						("Referer", &format!("{}", get_manga_url(manga_id))),
-					],
-				)
-				.ok()?;
-				real_manga_chapters_holder_node.select("ul > li.wp-manga-chapter")
-			}
-		};
+	let chapter_nodes = html
+		.select_one(
+			"div.tabs__content div.tabs_page[data-page=chapters] div.chapters div.chapters_list",
+		)
+		.map(|list| list.select("a.chapters_item"))
+		.unwrap_or_default();
 
 	let chapters = chapter_nodes
 		.into_iter()
 		.enumerate()
 		.filter_map(|(idx, chapter_node)| {
-			let url_node = chapter_node.select_one("a")?;
-			let url = url_node.attr("href")?.to_string();
+			let url = chapter_node.attr("href")?.to_string();
 			let id = url
 				.trim_start_matches(&format!("{}/", get_manga_url(manga_id)))
 				.trim_end_matches('/')
 				.to_string();
-			let title = url_node.text().trim().to_string();
+			let title = chapter_node
+				.select_one("div.chapters_name")
+				.map(|name| name.text().trim().to_string())
+				.unwrap_or_else(|| {
+					chapter_node
+						.select_one("div.chapters__value span")
+						.map(|val| val.text().trim().to_string())
+						.unwrap_or_else(|| format!("Глава {}", idx + 1))
+				});
 
-			let chapter = {
-				let approx_chapter = (idx + 1) as f32;
-				let possible_chapters: Vec<_> = title
-					.split_whitespace()
-					.filter_map(|word| word.parse::<f32>().ok())
-					.collect();
-				match possible_chapters.as_slice() {
-					[] => approx_chapter,
-					[chap] => *chap,
-					_ => possible_chapters
-						.iter()
-						.min_by(|&&l, &&r| {
-							let l_diff = (l - approx_chapter).abs();
-							let r_diff = (r - approx_chapter).abs();
-							l_diff.partial_cmp(&r_diff).unwrap_or(Ordering::Equal)
-						})
-						.copied()
-						.unwrap_or(approx_chapter),
-				}
-			};
+			let chapter = chapter_node
+				.attr("data-chapter")
+				.and_then(|ch| ch.parse::<f32>().ok())
+				.unwrap_or_else(|| (idx + 1) as f32);
 
-			let date_updated = {
-				let release_date_node = chapter_node.select_one("span.chapter-release-date")?;
-				release_date_node
-					.select_one("i")
-					.map(|i_node| {
-						let text = i_node.text();
-						let txt = text.trim();
-						let parsed1 = StringRef::from(txt).as_date("dd.MM.yyyy", None, None);
-						if parsed1 > 0.0 {
-							parsed1
-						} else {
-							StringRef::from(txt).as_date("dd-MM-yyyy", None, None)
-						}
-					})
-					.unwrap_or_else(|| {
-						release_date_node
-							.select_one("a")
-							.and_then(|a| a.attr("title"))
-							.and_then(|updated_text| {
-								if !updated_text.ends_with("ago") {
-									return None;
-								}
-								let spl: Vec<&str> = updated_text.split_whitespace().collect();
-								let count = spl.first().and_then(|s| s.parse::<f64>().ok())?;
-								let metric_mult = spl.get(1).and_then(|&metric| match metric {
-									"сек" => Some(1.0),
-									"мин" => Some(60.0),
-									"час" => Some(3600.0),
-									"дн" => Some(86400.0),
-									_ => None,
-								})?;
-								let current_time = current_date(); // 24.09.2025 19:40 CEST
-								Some(current_time - count * metric_mult)
-							})
-							.unwrap_or(0.0)
-					})
-			};
+			let date_updated = chapter_node
+				.attr("data-chapter-date")
+				.map(|date_str| {
+					let parsed = StringRef::from(date_str.trim()).as_date("dd.MM.yyyy", None, None);
+					if parsed > 0.0 {
+						parsed
+					} else {
+						current_date()
+					}
+				})
+				.unwrap_or(current_date());
 
 			Some(Chapter {
 				id,

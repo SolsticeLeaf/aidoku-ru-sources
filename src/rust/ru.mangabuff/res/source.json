@@ -3,16 +3,8 @@
     "id": "ru.mangabuff",
     "lang": "ru",
     "name": "MangaBuff",
-    "version": 11,
+    "version": 12,
     "url": "https://mangabuff.ru",
     "nsfw": 1
-  },
-  "listings": [
-    {
-      "name": "Популярное"
-    },
-    {
-      "name": "Новое"
-    }
-  ]
+  }
 }
