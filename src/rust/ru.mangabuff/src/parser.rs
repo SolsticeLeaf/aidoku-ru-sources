@@ -40,9 +40,9 @@ pub fn parse_lising(html: &WNode) -> Option<Vec<Manga>> {
 
 			Some(Manga {
 				id,
-				cover,
-				title,
-				url,
+				cover: "https://mangabuff.ru/img/manga/posters/kak-peremanit-muzha-na-svoyu-storonu.jpg?1755821782".to_string(),
+				title: "test".to_string(),
+				url: "test".to_string(),
 				nsfw: MangaContentRating::default(),
 				..Default::default()
 			})
