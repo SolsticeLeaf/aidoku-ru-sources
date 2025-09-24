@@ -18,10 +18,16 @@ extern crate alloc;
 
 #[get_manga_list]
 pub fn get_manga_list(filters: Vec<Filter>, page: i32) -> Result<MangaPageResult> {
-	let search_url = parser::get_filter_url(&filters, page).ok_or(constants::PARSING_ERROR)?;
-	let html = wrappers::get_html(&search_url)?;
-	let mangas = parser::parse_search_results(&html).ok_or(constants::PARSING_ERROR)?;
-	Ok(helpers::create_manga_page_result(mangas, None))
+	if filters.is_empty() {
+		let html = wrappers::get_html(&helpers::get_base_url())?;
+		let mangas = parser::parse_lising(&html).ok_or(constants::PARSING_ERROR)?;
+		Ok(helpers::create_manga_page_result(mangas, Some(false)))
+	} else {
+		let search_url = parser::get_filter_url(&filters, page).ok_or(constants::PARSING_ERROR)?;
+		let html = wrappers::get_html(&search_url)?;
+		let mangas = parser::parse_search_results(&html).ok_or(constants::PARSING_ERROR)?;
+		Ok(helpers::create_manga_page_result(mangas, None))
+	}
 }
 
 #[get_manga_listing]

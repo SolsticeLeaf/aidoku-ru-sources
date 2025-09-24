@@ -15,19 +15,23 @@ use crate::{
 };
 
 pub fn parse_lising(html: &WNode) -> Option<Vec<Manga>> {
-	let sidebar_node = html.select_one(&format!("div.cards"))?;
+	let page_node = html.select_one("div.cards")?;
 
-	let mangas = sidebar_node
+	let mangas = page_node
 		.select("div.owl-item")
 		.iter()
 		.filter_map(|manga_node| {
-			let main_node = manga_node.select_one("a.cards__item")?;
+			let main_node = manga_node.select_one("a")?;
 
 			let url = main_node.attr("href")?;
 			let img_style = main_node.select_one("div.cards__img")?.attr("style")?;
 			let id = get_manga_id(&url)?;
 			let cover = get_manga_thumb_url(&img_style)?;
-			let title = main_node.select_one("div.cards__name")?.text();
+			let title = main_node
+				.select_one("span.rating.cards_rating_green div.cards__name")?
+				.text()
+				.trim()
+				.to_string();
 
 			// TODO: Add parsing categories for filtering
 

@@ -27,7 +27,9 @@ pub fn get_manga_url(id: &str) -> String {
 
 pub fn get_manga_id(url: &str) -> Option<String> {
 	let split: Vec<_> = match url.find("://") {
-		Some(idx) => &url[idx + 3..],
+		Some(idx) => &url[idx + 3..]
+			.split_once("?")
+			.map_or(&url[idx + 3..], |x| x.0),
 		None => url,
 	}
 	.split('/')
@@ -50,7 +52,6 @@ pub fn get_manga_id(url: &str) -> Option<String> {
 }
 
 pub fn get_manga_thumb_url(style: &str) -> Option<String> {
-	// Извлекаем URL из строки background-image: url('...')
 	let thumb_url = style
 		.strip_prefix("background-image: url('")
 		.and_then(|s| s.strip_suffix("')"))
