@@ -20,6 +20,10 @@ pub fn parse_lising(html: &WNode) -> Option<Vec<Manga>> {
 	let mangas = page_node
 		.select("div.owl-item")
 		.iter()
+		.filter(|node| {
+			node.attr("class")
+				.is_none_or(|class| !class.contains("cloned"))
+		})
 		.filter_map(|manga_node| {
 			let main_node = manga_node.select_one("a")?;
 
@@ -30,7 +34,8 @@ pub fn parse_lising(html: &WNode) -> Option<Vec<Manga>> {
 				.to_string();
 			let id = get_manga_id(&url)?;
 			let cover = get_manga_thumb_url(&img_style)?;
-			let title_node = main_node.select_one("div.cards__name")?;
+			let title_node =
+				main_node.select_one("span.rating.cards_rating_green div.cards__name")?;
 			let title = title_node.text().trim().to_string();
 
 			Some(Manga {
