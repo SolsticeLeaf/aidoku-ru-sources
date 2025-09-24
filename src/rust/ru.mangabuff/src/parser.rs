@@ -18,43 +18,37 @@ pub fn parse_lising(html: &WNode) -> Option<Vec<Manga>> {
 	let mut mangas = Vec::new();
 
 	for card_node in html.select("div.cards") {
-		println!("Found div.cards: {:?}", card_node);
-
 		let card_mangas = card_node
-					.select("a.cards__item")
-					.iter()
-					.inspect(|node| println!("Found cards__item: {:?}", node.attr("class")))
-					.filter(|node| {
-							node.attr("class")
-									.is_none_or(|class| !class.contains("cloned"))
-					})
-					.filter_map(|manga_node| {
-							println!("Processing manga_node: {:?}", manga_node);
-							let main_node = manga_node;
+			.select("a.cards__item")
+			.iter()
+			.inspect(|node| println!("Found cards__item: {:?}", node.attr("class")))
+			.filter(|node| {
+				node.attr("class")
+					.is_none_or(|class| !class.contains("cloned"))
+			})
+			.filter_map(|manga_node| {
+				let main_node = manga_node;
 
-							let url = main_node.attr("href")?.to_string();
-							let img_style = main_node
-									.select_one("div.cards__img")?
-									.attr("style")?
-									.to_string();
-							println!("Found style: {:?}", img_style);
+				let url = main_node.attr("href")?.to_string();
+				let img_style = main_node
+					.select_one("div.cards__img")?
+					.attr("style")?
+					.to_string();
 
-							let id = get_manga_id(&url)?;
-							let cover = get_manga_thumb_url(&img_style)?;
-							let title_node =
-									main_node.select_one("div.cards__name")?; // Упрощаем селектор
-							println!("Found title node: {:?}", title_node.text());
+				let id = get_manga_id(&url)?;
+				let cover = get_manga_thumb_url(&img_style)?;
+				let title_node = main_node.select_one("div.cards__name")?;
 
-							Some(Manga {
-									id,
-									cover: "https://mangabuff.ru/img/manga/posters/kak-peremanit-muzha-na-svoyu-storonu.jpg?1755821782".to_string(),
-									title: "test".to_string(),
-									url: "test".to_string(),
-									nsfw: MangaContentRating::default(),
-									..Default::default()
-							})
-					})
-					.collect::<Vec<_>>();
+				Some(Manga {
+					id,
+					cover,
+					title: title_node.text(),
+					url,
+					nsfw: MangaContentRating::default(),
+					..Default::default()
+				})
+			})
+			.collect::<Vec<_>>();
 
 		mangas.extend(card_mangas);
 	}
