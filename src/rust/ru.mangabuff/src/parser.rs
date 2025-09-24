@@ -15,41 +15,56 @@ use crate::{
 };
 
 pub fn parse_lising(html: &WNode) -> Option<Vec<Manga>> {
-	let page_node = html.select_one("div.cards")?;
+	let mut mangas = Vec::new();
 
-	let mangas = page_node
-		.select("div.owl-item")
-		.iter()
-		.filter(|node| {
-			node.attr("class")
-				.is_none_or(|class| !class.contains("cloned"))
-		})
-		.filter_map(|manga_node| {
-			let main_node = manga_node.select_one("a")?;
+	for card_node in html.select("div.cards") {
+		println!("Found div.cards: {:?}", card_node);
 
-			let url = main_node.attr("href")?.to_string();
-			let img_style = main_node
-				.select_one("div.cards__img")?
-				.attr("style")?
-				.to_string();
-			let id = get_manga_id(&url)?;
-			let cover = get_manga_thumb_url(&img_style)?;
-			let title_node =
-				main_node.select_one("span.rating.cards_rating_green div.cards__name")?;
-			let title = title_node.text().trim().to_string();
+		let card_mangas = card_node
+					.select("div.owl-item")
+					.iter()
+					.inspect(|node| println!("Found owl-item: {:?}", node.attr("class")))
+					.filter(|node| {
+							node.attr("class")
+									.is_none_or(|class| !class.contains("cloned"))
+					})
+					.filter_map(|manga_node| {
+							println!("Processing manga_node: {:?}", manga_node);
+							let main_node = manga_node.select_one("a")?;
+							println!("Found <a> href: {:?}", main_node.attr("href"));
 
-			Some(Manga {
-				id,
-				cover: "https://mangabuff.ru/img/manga/posters/kak-peremanit-muzha-na-svoyu-storonu.jpg?1755821782".to_string(),
-				title: "test".to_string(),
-				url: "test".to_string(),
-				nsfw: MangaContentRating::default(),
-				..Default::default()
-			})
-		})
-		.collect();
+							let url = main_node.attr("href")?.to_string();
+							let img_style = main_node
+									.select_one("div.cards__img")?
+									.attr("style")?
+									.to_string();
+							println!("Found style: {:?}", img_style);
 
-	Some(mangas)
+							let id = get_manga_id(&url)?;
+							let cover = get_manga_thumb_url(&img_style)?;
+							let title_node =
+									main_node.select_one("span.rating.cards_rating_green div.cards__name")?;
+							println!("Found title node: {:?}", title_node.text());
+
+							Some(Manga {
+									id,
+									cover: "https://mangabuff.ru/img/manga/posters/kak-peremanit-muzha-na-svoyu-storonu.jpg?1755821782".to_string(),
+									title: "test".to_string(),
+									url: "test".to_string(),
+									nsfw: MangaContentRating::default(),
+									..Default::default()
+							})
+					})
+					.collect::<Vec<_>>();
+
+		mangas.extend(card_mangas);
+	}
+
+	if mangas.is_empty() {
+		None
+	} else {
+		Some(mangas)
+	}
 }
 
 pub fn parse_search_results(html: &WNode) -> Option<Vec<Manga>> {
