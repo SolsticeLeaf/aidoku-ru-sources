@@ -33,6 +33,7 @@ pub fn parse_search_results(html: &WNode) -> Result<Vec<Manga>> {
 			};
 
 			let img_node = div_img_node.select("img").pop()?;
+			let cover = img_node.attr("original")?;
 			let title = img_node.attr("title")?;
 
 			let div_desc_node = node.select("div.desc").pop()?;
@@ -54,7 +55,6 @@ pub fn parse_search_results(html: &WNode) -> Result<Vec<Manga>> {
 			let description = div_manga_description_node.text();
 
 			let url = helpers::get_manga_url(&id);
-			let cover = parse_manga_cover(&url);
 
 			let mut categories: Vec<String> = Vec::new();
 			categories.extend(div_tile_info_node.select("a.badge").iter().map(WNode::text));
@@ -85,7 +85,7 @@ pub fn parse_search_results(html: &WNode) -> Result<Vec<Manga>> {
 
 			Some(Manga {
 				id,
-				cover: cover.expect("REASON"),
+				cover,
 				title,
 				author,
 				artist: "".to_string(),
@@ -108,38 +108,6 @@ fn get_manga_page_main_node(html: &WNode) -> Result<WNode> {
 		.ok_or(helpers::create_parsing_error())
 }
 
-pub fn parse_manga_cover(url: &str) -> Result<String> {
-	let parsing_error = helpers::create_parsing_error();
-	let html = helpers::get_html(url)?;
-	let main_node = get_manga_page_main_node(&html)?;
-
-	let main_attributes_node = main_node
-		.select("div.flex-row")
-		.pop()
-		.ok_or(parsing_error)?;
-
-	let picture_fororama_node = main_attributes_node.select("div.picture-fotorama").pop();
-	Ok(picture_fororama_node
-		.and_then(|pfn| {
-			let imgs = pfn.select("img");
-			imgs.into_iter().next()
-		})
-		.and_then(|img_node| {
-			img_node
-				.attr("data-full")
-				.or_else(|| img_node.attr("data-thumb"))
-				.or_else(|| img_node.attr("src"))
-		})
-		.map(|url| {
-			if url.contains("://") {
-				url
-			} else {
-				format!("https:{url}")
-			}
-		})
-		.unwrap_or_default())
-}
-
 pub fn parse_manga(html: &WNode, id: String) -> Result<Manga> {
 	let parsing_error = helpers::create_parsing_error();
 
@@ -150,8 +118,8 @@ pub fn parse_manga(html: &WNode, id: String) -> Result<Manga> {
 		.pop()
 		.ok_or(parsing_error)?;
 
-	let picture_fororama_node = main_attributes_node.select("div.picture-fotorama").pop();
-	let cover = picture_fororama_node
+	let picture_fotorama_node = main_attributes_node.select("div.picture-fotorama").pop();
+	let cover = picture_fotorama_node
 		.and_then(|pfn| {
 			let imgs = pfn.select("img");
 			imgs.into_iter().next()
