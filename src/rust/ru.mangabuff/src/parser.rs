@@ -104,7 +104,7 @@ pub fn parse_manga(html: &WNode, id: String) -> Option<Manga> {
 				.select_one("div.manga__middle div.manga__middle-links")
 				.and_then(|links| {
 					links
-						.select("a.manga__middle-link")
+						.select("a")
 						.iter()
 						.find(|link| {
 							link.attr("href")
