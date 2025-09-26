@@ -179,6 +179,7 @@ pub fn parse_chapters(html: &WNode, manga_id: &str) -> Option<Vec<Chapter>> {
 			return None;
 		}
 	};
+	println!("parse_chapters: html is {}", resp_html);
 	let resp_node = WNode::from_node(resp_html);
 	println!("parse_chapters: response node created");
 
