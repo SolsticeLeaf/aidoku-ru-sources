@@ -87,12 +87,17 @@ pub fn parse_manga(html: &WNode, id: String) -> Option<Manga> {
 						.collect::<Vec<_>>()
 				})
 				.unwrap_or_default();
-			let mid_links = main_node.select("a");
+			let mut mid_links = html.select("a.manga__middle-link");
+			if mid_links.is_empty() {
+				mid_links = main_node.select("div.manga__middle-links a");
+			}
 			let status = mid_links
 				.iter()
 				.find(|link| {
-					link.attr("href")
-						.is_some_and(|href| href.to_string().contains("status_id"))
+					!link.text().trim().is_empty()
+						&& link
+							.attr("href")
+							.is_some_and(|href| href.to_string().contains("status_id"))
 				})
 				.map(|link| parse_status(link.text().trim()))
 				.unwrap_or(MangaStatus::Unknown);
@@ -100,8 +105,10 @@ pub fn parse_manga(html: &WNode, id: String) -> Option<Manga> {
 			let type_label = mid_links
 				.iter()
 				.find(|link| {
-					link.attr("href")
-						.is_some_and(|href| href.to_string().contains("/types/"))
+					!link.text().trim().is_empty()
+						&& link
+							.attr("href")
+							.is_some_and(|href| href.to_string().contains("/types/"))
 				})
 				.map(|link| link.text().trim().to_string());
 			println!("parse_manga: type_label={:?}", type_label);
