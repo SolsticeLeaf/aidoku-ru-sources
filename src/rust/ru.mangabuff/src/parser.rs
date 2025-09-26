@@ -68,15 +68,82 @@ pub fn parse_manga(html: &WNode, id: String) -> Option<Manga> {
 		html.select_one("div.tabs__content div.tabs__page[data-page=info] div.manga__description")?;
 	println!("parse_manga: found description_node");
 
-	let img_block = match main_node.select_one("div.manga__img") {
-		Some(n) => {
-			println!("parse_manga: found manga__img block");
-			n
+	let img_block = if let Some(n) = main_node.select_one("div.manga__img") {
+		println!("parse_manga: found manga__img block (within main_node)");
+		n
+	} else if let Some(n) = html.select_one("div.manga__img") {
+		println!("parse_manga: found manga__img block (fallback from root)");
+		n
+	} else {
+		println!("parse_manga: missing manga__img block, will try og:image meta");
+		// Try to use og:image as ultimate fallback
+		if let Some(meta) = html.select_one("meta[property=og:image]") {
+			if let Some(og_image) = meta.attr("content") {
+				println!("parse_manga: using og:image={}", og_image);
+				let cover = og_image;
+				let url = get_manga_url(&id);
+				let title = main_node.select_one("h1.manga__name")?.text().to_string();
+				let categories = html
+					.select_one("div.tags")
+					.map(|type_node| {
+						type_node
+							.select("a.tags__item")
+							.iter()
+							.map(WNode::text)
+							.map(|s| s.trim().to_string())
+							.collect::<Vec<_>>()
+					})
+					.unwrap_or_default();
+				let status = main_node
+					.select_one("div.manga__middle div.manga__middle-links")
+					.and_then(|links| {
+						links
+							.select("a.manga__middle-link")
+							.iter()
+							.find(|link| {
+								link.attr("href")
+									.is_some_and(|href| href.contains("status_id"))
+							})
+							.map(|link| parse_status(link.text().trim()))
+					})
+					.unwrap_or(MangaStatus::Unknown);
+				let viewer = main_node
+					.select_one("div.manga__middle div.manga__middle-links")
+					.and_then(|links| {
+						links
+							.select("a.manga__middle-link")
+							.iter()
+							.find(|link| {
+								link.attr("href")
+									.is_some_and(|href| href.contains("/types/"))
+							})
+							.map(|link| match link.text().trim() {
+								"Манхва" => MangaViewer::Scroll,
+								"OEL-манга" => MangaViewer::Scroll,
+								"Комикс Западный" => MangaViewer::Ltr,
+								"Маньхуа" => MangaViewer::Scroll,
+								"Манга" => MangaViewer::default(),
+								_ => MangaViewer::default(),
+							})
+					})
+					.unwrap_or(MangaViewer::default());
+				let description = description_node.text().to_string();
+				return Some(Manga {
+					id,
+					cover,
+					title,
+					author: "".to_string(),
+					artist: "".to_string(),
+					description,
+					url,
+					categories,
+					status,
+					nsfw: MangaContentRating::default(),
+					viewer,
+				});
+			}
 		}
-		None => {
-			println!("parse_manga: missing manga__img block");
-			return None;
-		}
+		return None;
 	};
 	let img_node = match img_block.select_one("img") {
 		Some(n) => {
