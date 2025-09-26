@@ -169,22 +169,34 @@ pub fn parse_chapters(html: &WNode, manga_id: &str) -> Option<Vec<Chapter>> {
 		.header("X-CSRF-TOKEN", &csrf_token)
 		.header("Content-Type", "application/x-www-form-urlencoded")
 		.body(body.as_bytes());
-	let resp_html = match req.html() {
-		Ok(h) => {
-			println!("parse_chapters: POST success");
-			h
+	let resp_text = match req.string() {
+		Ok(s) => {
+			println!("parse_chapters: POST success (string) len={}", s.len());
+			s
 		}
 		Err(e) => {
 			println!("parse_chapters: POST failed: {:?}", e);
 			return None;
 		}
 	};
-	println!("parse_chapters: html is {}", resp_html);
-	let resp_node = WNode::from_node(resp_html);
-	println!("parse_chapters: response node created");
 
-	// 3) Parse chapters from the response HTML (same structure as before)
-	let chapter_nodes = resp_node.select("a.chapters__item");
+	let body_start = resp_text.find("<body>").map(|i| i + 6).unwrap_or(0);
+	let body_end = resp_text.find("</body>").unwrap_or(resp_text.len());
+	let mut inner = resp_text[body_start..body_end].to_string();
+	if inner.len() > 400 {
+		println!("parse_chapters: inner body preview: {}", &inner[..400]);
+	} else {
+		println!("parse_chapters: inner body preview: {}", inner);
+	}
+	inner = inner
+		.replace("\\\"", "\"")
+		.replace("\\/", "/")
+		.replace("&quot;", "\"")
+		.replace("&lt;", "<")
+		.replace("&gt;", ">")
+		.replace("&amp;", "&");
+	let resp_node_fallback = WNode::_new(inner);
+	let chapter_nodes = resp_node_fallback.select("a.chapters__item");
 	println!(
 		"parse_chapters: chapter nodes count={}",
 		chapter_nodes.len()
@@ -253,9 +265,13 @@ pub fn parse_chapters(html: &WNode, manga_id: &str) -> Option<Vec<Chapter>> {
 }
 
 pub fn get_page_list(html: &WNode) -> Option<Vec<Page>> {
-	let reader_content_node = html.select_one("ul.pagination")?;
-	let page_nodes = reader_content_node.select("li.pagination__button");
-	let urls: Vec<_> = page_nodes.into_iter().map(|url| url.text()).collect();
+	let reader_content_node = html.select_one("div.reader__pages")?;
+	let page_nodes = reader_content_node.select("div.reader__pages > img");
+	let urls: Vec<_> = page_nodes
+		.into_iter()
+		.filter_map(|img_node| img_node.attr("src"))
+		.map(|url| url.trim().to_string())
+		.collect();
 
 	Some(
 		urls.into_iter()
