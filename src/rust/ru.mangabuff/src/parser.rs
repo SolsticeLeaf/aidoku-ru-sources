@@ -140,54 +140,104 @@ pub fn parse_manga(html: &WNode, id: String) -> Option<Manga> {
 }
 
 pub fn parse_chapters(html: &WNode, manga_id: &str) -> Option<Vec<Chapter>> {
-	// 1) Extract CSRF token and manga data-id from the page
-	println!("parse_chapters: start manga_id={}", manga_id);
-	let csrf_token = match html
+	let chapter_nodes = html
+		.select_one(
+			"div.tabs__content div.tabs__page[data-page=chapters] div.chapters div.chapters__list",
+		)
+		.map(|list| list.select("a.chapters__item"))
+		.unwrap_or_default();
+
+	let mut chapters: Vec<_> = chapter_nodes
+		.into_iter()
+		.enumerate()
+		.filter_map(|(idx, chapter_node)| {
+			let url = chapter_node.attr("href")?.to_string();
+			let id = url
+				.trim_start_matches(&format!("{}/", get_manga_url(manga_id)))
+				.trim_end_matches('/')
+				.to_string();
+			let title = chapter_node
+				.select_one("div.chapters__name")
+				.map(|name| {
+					let t = name.text().trim().to_string();
+					if t.is_empty() {
+						chapter_node
+							.select_one("div.chapters__value span")
+							.map(|val| val.text().trim().to_string())
+							.unwrap_or_else(|| format!("Глава {}", idx + 1))
+					} else {
+						t
+					}
+				})
+				.unwrap_or_else(|| {
+					chapter_node
+						.select_one("div.chapters__value span")
+						.map(|val| val.text().trim().to_string())
+						.unwrap_or_else(|| format!("Глава {}", idx + 1))
+				});
+			let chapter = chapter_node
+				.attr("data-chapter")
+				.and_then(|ch| ch.parse::<f32>().ok())
+				.unwrap_or_else(|| (idx + 1) as f32);
+			let date_updated = chapter_node
+				.attr("data-chapter-date")
+				.map(|date_str| {
+					let parsed = StringRef::from(date_str.trim()).as_date("dd.MM.yyyy", None, None);
+					if parsed > 0.0 {
+						parsed
+					} else {
+						current_date()
+					}
+				})
+				.unwrap_or(current_date());
+			Some(Chapter {
+				id,
+				title,
+				chapter,
+				date_updated,
+				url,
+				lang: "ru".to_string(),
+				..Default::default()
+			})
+		})
+		.collect();
+
+	// Merge with chapters loaded via POST, deduplicating by id
+	if let Some(mut extra) = parse_post_chapters(html, manga_id) {
+		for ch in extra.drain(..) {
+			if !chapters.iter().any(|c| c.id == ch.id) {
+				chapters.push(ch);
+			}
+		}
+	}
+
+	Some(chapters)
+}
+
+pub fn parse_post_chapters(html: &WNode, manga_id: &str) -> Option<Vec<Chapter>> {
+	let csrf_token = html
 		.select_one("meta[name=csrf-token]")
-		.and_then(|m| m.attr("content"))
-	{
-		Some(t) => {
-			println!("parse_chapters: csrf token found (len={})", t.len());
-			t
-		}
-		None => {
-			println!("parse_chapters: csrf token NOT found");
-			return None;
-		}
-	};
+		.and_then(|m| m.attr("content"))?;
+
 	let data_id = html
 		.select_one("div.manga")
 		.and_then(|m| m.attr("data-id"))
 		.unwrap_or(manga_id.to_string());
-	println!("parse_chapters: data-id={}", data_id);
 
-	// 2) Make POST request to /chapters/load with headers and form body
 	let url = format!("{}/chapters/load", get_base_url());
 	let body = format!("manga_id={}", data_id);
-	println!("parse_chapters: POST {} body='{}'", url, body);
 	let req = aidoku::std::net::Request::new(&url, aidoku::std::net::HttpMethod::Post)
 		.header("X-CSRF-TOKEN", &csrf_token)
 		.header("Content-Type", "application/x-www-form-urlencoded")
 		.body(body.as_bytes());
 	let resp_text = match req.string() {
-		Ok(s) => {
-			println!("parse_chapters: POST success (string) len={}", s.len());
-			s
-		}
-		Err(e) => {
-			println!("parse_chapters: POST failed: {:?}", e);
-			return None;
-		}
+		Ok(s) => s,
+		Err(_) => return None,
 	};
 
 	let body_start = resp_text.find("<body>").map(|i| i + 6).unwrap_or(0);
 	let body_end = resp_text.find("</body>").unwrap_or(resp_text.len());
 	let mut inner = resp_text[body_start..body_end].to_string();
-	if inner.len() > 400 {
-		println!("parse_chapters: inner body preview: {}", &inner[..400]);
-	} else {
-		println!("parse_chapters: inner body preview: {}", inner);
-	}
 	inner = inner
 		.replace("\\\"", "\"")
 		.replace("\\/", "/")
@@ -197,10 +247,6 @@ pub fn parse_chapters(html: &WNode, manga_id: &str) -> Option<Vec<Chapter>> {
 		.replace("&amp;", "&");
 	let resp_node_fallback = WNode::_new(inner);
 	let chapter_nodes = resp_node_fallback.select("a.chapters__item");
-	println!(
-		"parse_chapters: chapter nodes count={}",
-		chapter_nodes.len()
-	);
 
 	let chapters = chapter_nodes
 		.into_iter()
@@ -266,12 +312,25 @@ pub fn parse_chapters(html: &WNode, manga_id: &str) -> Option<Vec<Chapter>> {
 
 pub fn get_page_list(html: &WNode) -> Option<Vec<Page>> {
 	let reader_content_node = html.select_one("div.reader__pages")?;
-	let page_nodes = reader_content_node.select("div.reader__pages > img");
-	let urls: Vec<_> = page_nodes
+	let item_nodes = reader_content_node.select("div.reader__item");
+	let mut pages: Vec<(i32, String)> = item_nodes
 		.into_iter()
-		.filter_map(|img_node| img_node.attr("src"))
-		.map(|url| url.trim().to_string())
+		.filter_map(|item| {
+			let page_num = item
+				.attr("data-page")
+				.and_then(|s| s.parse::<i32>().ok())
+				.unwrap_or(0);
+			let img = item.select_one("img")?;
+			let url = img
+				.attr("src")
+				.or_else(|| img.attr("data-src"))?
+				.trim()
+				.to_string();
+			Some((page_num, url))
+		})
 		.collect();
+	pages.sort_by_key(|(n, _)| *n);
+	let urls: Vec<String> = pages.into_iter().map(|(_, u)| u).collect();
 
 	Some(
 		urls.into_iter()
