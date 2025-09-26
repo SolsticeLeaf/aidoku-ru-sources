@@ -68,11 +68,33 @@ pub fn parse_manga(html: &WNode, id: String) -> Option<Manga> {
 		html.select_one("div.tabs__content div.tabs__page[data-page=info] div.manga__description")?;
 	println!("parse_manga: found description_node");
 
-	let image_url = main_node
-		.select_one("div.manga__img")?
-		.select_one("img")?
-		.attr("src")?
-		.to_string();
+	let img_block = match main_node.select_one("div.manga__img") {
+		Some(n) => {
+			println!("parse_manga: found manga__img block");
+			n
+		}
+		None => {
+			println!("parse_manga: missing manga__img block");
+			return None;
+		}
+	};
+	let img_node = match img_block.select_one("img") {
+		Some(n) => {
+			println!("parse_manga: found <img> inside manga__img");
+			n
+		}
+		None => {
+			println!("parse_manga: missing <img> in manga__img");
+			return None;
+		}
+	};
+	let image_url = match img_node.attr("src").or_else(|| img_node.attr("data-src")) {
+		Some(s) => s,
+		None => {
+			println!("parse_manga: image has no src or data-src");
+			return None;
+		}
+	};
 	println!("parse_manga: image_url={}", image_url);
 	let cover = format!("{}{}", get_base_url(), image_url);
 	println!("parse_manga: cover={}", cover);
@@ -166,6 +188,10 @@ pub fn parse_chapters(html: &WNode, manga_id: &str) -> Option<Vec<Chapter>> {
 		.into_iter()
 		.enumerate()
 		.filter_map(|(idx, chapter_node)| {
+			if chapter_node.attr("href").is_none() {
+				println!("parse_chapters[{}]: missing href", idx);
+				return None;
+			}
 			let url = chapter_node.attr("href")?.to_string();
 			println!("parse_chapters[{}]: url={}", idx, url);
 			let id = url
