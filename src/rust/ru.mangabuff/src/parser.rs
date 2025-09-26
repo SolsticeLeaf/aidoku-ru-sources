@@ -87,31 +87,23 @@ pub fn parse_manga(html: &WNode, id: String) -> Option<Manga> {
 						.collect::<Vec<_>>()
 				})
 				.unwrap_or_default();
-			let status = main_node
-				.select_one("div.manga__middle div.manga__middle-links")
-				.and_then(|links| {
-					links
-						.select("a.manga__middle-link")
-						.iter()
-						.find(|link| {
-							link.attr("href")
-								.is_some_and(|href| href.contains("status_id"))
-						})
-						.map(|link| parse_status(link.text().trim()))
+			let mid_links = html.select("div.manga__middle-links a");
+			let status = mid_links
+				.iter()
+				.find(|link| {
+					link.attr("href")
+						.is_some_and(|href| href.contains("status_id"))
 				})
+				.map(|link| parse_status(link.text().trim()))
 				.unwrap_or(MangaStatus::Unknown);
-			let type_label = main_node
-				.select_one("div.manga__middle div.manga__middle-links")
-				.and_then(|links| {
-					links
-						.select("a")
-						.iter()
-						.find(|link| {
-							link.attr("href")
-								.is_some_and(|href| href.contains("/types/"))
-						})
-						.map(|link| link.text().trim().to_string())
-				});
+			println!("parse_manga: status={:?}", status);
+			let type_label = mid_links
+				.iter()
+				.find(|link| {
+					link.attr("href")
+						.is_some_and(|href| href.contains("/types/"))
+				})
+				.map(|link| link.text().trim().to_string());
 			println!("parse_manga: type_label={:?}", type_label);
 			if let Some(label) = &type_label {
 				if !categories.iter().any(|c| c == label) {
