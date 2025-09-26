@@ -141,26 +141,53 @@ pub fn parse_manga(html: &WNode, id: String) -> Option<Manga> {
 
 pub fn parse_chapters(html: &WNode, manga_id: &str) -> Option<Vec<Chapter>> {
 	// 1) Extract CSRF token and manga data-id from the page
-	let csrf_token = html
+	println!("parse_chapters: start manga_id={}", manga_id);
+	let csrf_token = match html
 		.select_one("meta[name=csrf-token]")
-		.and_then(|m| m.attr("content"))?;
+		.and_then(|m| m.attr("content"))
+	{
+		Some(t) => {
+			println!("parse_chapters: csrf token found (len={})", t.len());
+			t
+		}
+		None => {
+			println!("parse_chapters: csrf token NOT found");
+			return None;
+		}
+	};
 	let data_id = html
 		.select_one("div.manga")
 		.and_then(|m| m.attr("data-id"))
 		.unwrap_or(manga_id.to_string());
+	println!("parse_chapters: data-id={}", data_id);
 
 	// 2) Make POST request to /chapters/load with headers and form body
 	let url = format!("{}/chapters/load", get_base_url());
 	let body = format!("manga_id={}", data_id);
+	println!("parse_chapters: POST {} body='{}'", url, body);
 	let req = aidoku::std::net::Request::new(&url, aidoku::std::net::HttpMethod::Post)
 		.header("X-CSRF-TOKEN", &csrf_token)
 		.header("Content-Type", "application/x-www-form-urlencoded")
 		.body(body.as_bytes());
-	let resp_html = req.html().ok()?;
+	let resp_html = match req.html() {
+		Ok(h) => {
+			println!("parse_chapters: POST success");
+			h
+		}
+		Err(e) => {
+			println!("parse_chapters: POST failed: {:?}", e);
+			return None;
+		}
+	};
 	let resp_node = WNode::from_node(resp_html);
+	println!("parse_chapters: response node created");
 
 	// 3) Parse chapters from the response HTML (same structure as before)
 	let chapter_nodes = resp_node.select("a.chapters__item");
+	println!(
+		"parse_chapters: chapter nodes count={}",
+		chapter_nodes.len()
+	);
 
 	let chapters = chapter_nodes
 		.into_iter()
