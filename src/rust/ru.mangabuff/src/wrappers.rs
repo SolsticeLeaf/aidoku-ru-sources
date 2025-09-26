@@ -11,7 +11,7 @@ use alloc::{string::String, vec::Vec};
 
 macro_rules! debug {
 	($($arg:tt)*) => {{
-		println!("ru.mangaonelove:: {}:{}: {}", file!(), line!(), format!($($arg)*))
+		println!("ru.mangabuff:: {}:{}: {}", file!(), line!(), format!($($arg)*))
 	}};
 }
 pub(crate) use debug;
