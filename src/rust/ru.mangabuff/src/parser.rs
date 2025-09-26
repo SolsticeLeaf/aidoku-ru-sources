@@ -61,18 +61,25 @@ pub fn parse_manga_list(html: &WNode) -> Option<Vec<Manga>> {
 }
 
 pub fn parse_manga(html: &WNode, id: String) -> Option<Manga> {
+	println!("parse_manga: start id={}", id);
 	let main_node = html.select_one("div.manga")?;
+	println!("parse_manga: found main_node");
 	let description_node =
 		html.select_one("div.tabs__content div.tabs__page[data-page=info] div.manga__description")?;
+	println!("parse_manga: found description_node");
 
 	let image_url = main_node
 		.select_one("div.manga__img")?
 		.select_one("img")?
 		.attr("src")?
 		.to_string();
+	println!("parse_manga: image_url={}", image_url);
 	let cover = format!("{}{}", get_base_url(), image_url);
+	println!("parse_manga: cover={}", cover);
 	let url = get_manga_url(&id);
+	println!("parse_manga: url={}", url);
 	let title = main_node.select_one("h1.manga__name")?.text().to_string();
+	println!("parse_manga: title={}", title);
 
 	let categories = html
 		.select_one("div.tags")
@@ -85,6 +92,7 @@ pub fn parse_manga(html: &WNode, id: String) -> Option<Manga> {
 				.collect::<Vec<_>>()
 		})
 		.unwrap_or_default();
+	println!("parse_manga: categories={:?}", categories);
 
 	let status = main_node
 		.select_one("div.manga__middle div.manga__middle-links")
@@ -99,6 +107,7 @@ pub fn parse_manga(html: &WNode, id: String) -> Option<Manga> {
 				.map(|link| parse_status(link.text().trim()))
 		})
 		.unwrap_or(MangaStatus::Unknown);
+	println!("parse_manga: status={:?}", status);
 
 	let viewer = main_node
 		.select_one("div.manga__middle div.manga__middle-links")
@@ -120,8 +129,10 @@ pub fn parse_manga(html: &WNode, id: String) -> Option<Manga> {
 				})
 		})
 		.unwrap_or(MangaViewer::default());
+	println!("parse_manga: viewer={:?}", viewer);
 
 	let description = description_node.text().to_string();
+	println!("parse_manga: description.len={}", description.len());
 
 	Some(Manga {
 		id,
@@ -139,22 +150,29 @@ pub fn parse_manga(html: &WNode, id: String) -> Option<Manga> {
 }
 
 pub fn parse_chapters(html: &WNode, manga_id: &str) -> Option<Vec<Chapter>> {
+	println!("parse_chapters: start manga_id={}", manga_id);
 	let chapter_nodes = html
 		.select_one(
 			"div.tabs__content div.tabs__page[data-page=chapters] div.chapters div.chapters__list",
 		)
 		.map(|list| list.select("a.chapters__item"))
 		.unwrap_or_default();
+	println!(
+		"parse_chapters: found {} chapter nodes",
+		chapter_nodes.len()
+	);
 
 	let chapters = chapter_nodes
 		.into_iter()
 		.enumerate()
 		.filter_map(|(idx, chapter_node)| {
 			let url = chapter_node.attr("href")?.to_string();
+			println!("parse_chapters[{}]: url={}", idx, url);
 			let id = url
 				.trim_start_matches(&format!("{}/", get_manga_url(manga_id)))
 				.trim_end_matches('/')
 				.to_string();
+			println!("parse_chapters[{}]: id={}", idx, id);
 			let title = chapter_node
 				.select_one("div.chapters__name")
 				.map(|name| {
@@ -174,11 +192,13 @@ pub fn parse_chapters(html: &WNode, manga_id: &str) -> Option<Vec<Chapter>> {
 						.map(|val| val.text().trim().to_string())
 						.unwrap_or_else(|| format!("Глава {}", idx + 1))
 				});
+			println!("parse_chapters[{}]: title={}", idx, title);
 
 			let chapter = chapter_node
 				.attr("data-chapter")
 				.and_then(|ch| ch.parse::<f32>().ok())
 				.unwrap_or_else(|| (idx + 1) as f32);
+			println!("parse_chapters[{}]: chapter={}", idx, chapter);
 
 			let date_updated = chapter_node
 				.attr("data-chapter-date")
@@ -191,6 +211,7 @@ pub fn parse_chapters(html: &WNode, manga_id: &str) -> Option<Vec<Chapter>> {
 					}
 				})
 				.unwrap_or(current_date());
+			println!("parse_chapters[{}]: date_updated={}", idx, date_updated);
 
 			Some(Chapter {
 				id,
