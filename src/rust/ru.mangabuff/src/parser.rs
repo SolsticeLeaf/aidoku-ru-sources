@@ -83,6 +83,8 @@ pub fn parse_manga(html: &WNode, id: String) -> Option<Manga> {
 				let cover = og_image;
 				let url = get_manga_url(&id);
 				let title = main_node.select_one("h1.manga__name")?.text().to_string();
+				println!("parse_manga(og): url={}", url);
+				println!("parse_manga(og): title={}", title);
 				let categories = html
 					.select_one("div.tags")
 					.map(|type_node| {
@@ -94,6 +96,7 @@ pub fn parse_manga(html: &WNode, id: String) -> Option<Manga> {
 							.collect::<Vec<_>>()
 					})
 					.unwrap_or_default();
+				println!("parse_manga(og): categories={:?}", categories);
 				let status = main_node
 					.select_one("div.manga__middle div.manga__middle-links")
 					.and_then(|links| {
@@ -107,6 +110,7 @@ pub fn parse_manga(html: &WNode, id: String) -> Option<Manga> {
 							.map(|link| parse_status(link.text().trim()))
 					})
 					.unwrap_or(MangaStatus::Unknown);
+				println!("parse_manga(og): status={:?}", status);
 				let viewer = main_node
 					.select_one("div.manga__middle div.manga__middle-links")
 					.and_then(|links| {
@@ -127,7 +131,9 @@ pub fn parse_manga(html: &WNode, id: String) -> Option<Manga> {
 							})
 					})
 					.unwrap_or(MangaViewer::default());
+				println!("parse_manga(og): viewer={:?}", viewer);
 				let description = description_node.text().to_string();
+				println!("parse_manga(og): description.len={}", description.len());
 				return Some(Manga {
 					id,
 					cover,
