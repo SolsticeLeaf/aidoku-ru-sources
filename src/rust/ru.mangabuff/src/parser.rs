@@ -101,7 +101,6 @@ pub fn parse_manga(html: &WNode, id: String) -> Option<Manga> {
 				})
 				.map(|link| parse_status(link.text().trim()))
 				.unwrap_or(MangaStatus::Unknown);
-			println!("parse_manga: status={:?}", status);
 			let type_label = mid_links
 				.iter()
 				.find(|link| {
@@ -111,7 +110,6 @@ pub fn parse_manga(html: &WNode, id: String) -> Option<Manga> {
 							.is_some_and(|href| href.to_string().contains("/types/"))
 				})
 				.map(|link| link.text().trim().to_string());
-			println!("parse_manga: type_label={:?}", type_label);
 			if let Some(label) = &type_label {
 				if !categories.iter().any(|c| c == label) {
 					categories.push(label.clone());
