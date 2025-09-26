@@ -1,0 +1,29 @@
+[
+  {
+    "id": "ru.mangabuff",
+    "name": "MangaBuff",
+    "file": "ru.mangabuff-v1.aix",
+    "icon": "ru.mangabuff-v1.png",
+    "lang": "ru",
+    "version": 1,
+    "nsfw": 1
+  },
+  {
+    "id": "ru.mangaonelove",
+    "name": "MangaOneLove",
+    "file": "ru.mangaonelove-v2.aix",
+    "icon": "ru.mangaonelove-v2.png",
+    "lang": "ru",
+    "version": 2,
+    "nsfw": 2
+  },
+  {
+    "id": "ru.readmanga",
+    "name": "ReadManga",
+    "file": "ru.readmanga-v8.aix",
+    "icon": "ru.readmanga-v8.png",
+    "lang": "ru",
+    "version": 8,
+    "nsfw": 1
+  }
+]
