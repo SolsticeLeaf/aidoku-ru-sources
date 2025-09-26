@@ -76,7 +76,7 @@ pub fn parse_manga(html: &WNode, id: String) -> Option<Manga> {
 				})
 				.unwrap_or("".to_string())
 				.to_string();
-			let categories = html
+			let mut categories = html
 				.select_one("div.tags")
 				.map(|type_node| {
 					type_node
@@ -100,7 +100,7 @@ pub fn parse_manga(html: &WNode, id: String) -> Option<Manga> {
 						.map(|link| parse_status(link.text().trim()))
 				})
 				.unwrap_or(MangaStatus::Unknown);
-			let viewer = main_node
+			let type_label = main_node
 				.select_one("div.manga__middle div.manga__middle-links")
 				.and_then(|links| {
 					links
@@ -110,16 +110,22 @@ pub fn parse_manga(html: &WNode, id: String) -> Option<Manga> {
 							link.attr("href")
 								.is_some_and(|href| href.contains("/types/"))
 						})
-						.map(|link| match link.text().trim() {
-							"Манхва" => MangaViewer::Scroll,
-							"OEL-манга" => MangaViewer::Scroll,
-							"Комикс Западный" => MangaViewer::Ltr,
-							"Маньхуа" => MangaViewer::Scroll,
-							"Манга" => MangaViewer::default(),
-							_ => MangaViewer::default(),
-						})
-				})
-				.unwrap_or(MangaViewer::default());
+						.map(|link| link.text().trim().to_string())
+				});
+			println!("parse_manga: type_label={:?}", type_label);
+			if let Some(label) = &type_label {
+				if !categories.iter().any(|c| c == label) {
+					categories.push(label.clone());
+				}
+			}
+			let viewer = match type_label.as_deref() {
+				Some("Манхва") => MangaViewer::Scroll,
+				Some("OEL-манга") => MangaViewer::Scroll,
+				Some("Комикс Западный") => MangaViewer::Ltr,
+				Some("Маньхуа") => MangaViewer::Scroll,
+				Some("Манга") => MangaViewer::default(),
+				_ => MangaViewer::default(),
+			};
 			let description = description_node.text().to_string();
 			return Some(Manga {
 				id,
