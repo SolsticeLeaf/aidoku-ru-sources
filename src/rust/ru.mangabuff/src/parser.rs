@@ -82,7 +82,15 @@ pub fn parse_manga(html: &WNode, id: String) -> Option<Manga> {
 				println!("parse_manga: using og:image={}", og_image);
 				let cover = og_image;
 				let url = get_manga_url(&id);
-				let title = main_node.select_one("h1.manga__name")?.text().to_string();
+				let title = main_node
+					.select_one("h1.manga__name")
+					.map(|n| n.text().to_string())
+					.or_else(|| {
+						html.select_one("meta[property=og:title]")
+							.and_then(|m| m.attr("content"))
+					})
+					.unwrap_or("".to_string())
+					.to_string();
 				println!("parse_manga(og): url={}", url);
 				println!("parse_manga(og): title={}", title);
 				let categories = html
